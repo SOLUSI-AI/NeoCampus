@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="slides-format" content="viewport" />
+  <title>Strategi Percepatan Enrollment UKWMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #0f172a;
+      --color-bg-deep: #020617;
+      --color-surface: #1f2937;
+      --color-text: #f9fafb;
+      --color-text-secondary: #e5e7eb;
+      --color-text-muted: #9ca3af;
+      --color-accent-1: #8BC34A;
+      --color-accent-2: #F5F0D0;
+      --color-accent-3: #D4A017;
+      --color-glass-bg: rgba(15,23,42,0.9);
+      --color-glass-border: rgba(148,163,184,0.55);
+      --color-vignette: rgba(0,0,0,0.6);
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg:#0f172a; --color-text:#f9fafb; --glow-color-rgb:139,195,74; }
+    *,*::before,*::after{box-sizing:border-box;}
+    html,body{margin:0;background:var(--color-bg);}  
+    body{font-family:var(--font-body);color:var(--color-text);overflow:hidden;height:100vh;width:100vw;}
+    .deck{width:100vw;height:100vh;position:relative;}
+    .slide{position:absolute;inset:0;background:radial-gradient(circle at top,#111827 0,#020617 58%);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.95);transition:opacity .7s ease,transform .7s ease;pointer-events:none;overflow:hidden;}
+    .slide.active{opacity:1;transform:scale(1);pointer-events:auto;}
+    .slide>.content{position:relative;z-index:2;width:100%;max-width:1100px;padding:clamp(1.8rem,4vw,4rem);}
+    .nav-controls{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;z-index:100;background:rgba(15,23,42,0.9);backdrop-filter:blur(14px);padding:10px 22px;border-radius:999px;border:1px solid rgba(148,163,184,0.55);box-shadow:0 18px 45px rgba(15,23,42,0.95);}
+    .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:rgba(30,64,175,0.35);color:#e5fbea;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .25s,transform .25s,box-shadow .25s;}
+    .nav-btn:hover{background:rgba(56,189,248,0.9);transform:translateY(-1px);box-shadow:0 0 18px rgba(56,189,248,0.85);}  
+    .slide-dots{display:flex;gap:8px;}
+    .slide-dots .dot{width:9px;height:9px;border-radius:999px;background:rgba(148,163,184,0.45);cursor:pointer;transition:background .3s,transform .3s;}
+    .slide-dots .dot.active{background:#8BC34A;transform:scale(1.35);}  
+    .slide-counter{font-size:.78rem;color:var(--color-text-muted);min-width:46px;text-align:center;font-variant-numeric:tabular-nums;}
+    .reveal{opacity:0;transform:translateY(18px);}  
+    .gradient-mesh{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+    .blob{position:absolute;border-radius:999px;filter:blur(80px);opacity:.16;animation:float-slow 18s ease-in-out infinite;}
+    .blob:nth-child(2){animation-duration:22s;animation-direction:reverse;opacity:.12;}
+    .blob:nth-child(3){animation-duration:26s;opacity:.1;}
+    @keyframes float-slow{0%{transform:translate3d(0,0,0) scale(1);}25%{transform:translate3d(60px,-40px,0) scale(1.1);}50%{transform:translate3d(-50px,40px,0) scale(.96);}75%{transform:translate3d(40px,10px,0) scale(1.05);}100%{transform:translate3d(0,0,0) scale(1);}}
+    .slide::before{content:'';position:absolute;inset:-40px;z-index:1;pointer-events:none;background-image:radial-gradient(circle at 10% 0%,rgba(139,195,74,0.23) 0,transparent 55%),radial-gradient(circle at 90% 100%,rgba(245,240,208,0.24) 0,transparent 55%);mix-blend-mode:screen;opacity:.6;}
+    .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,var(--color-vignette) 100%);}  
+    .mouse-spotlight{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:.65;}
+    .glass-panel{background:var(--color-glass-bg);border:1px solid var(--color-glass-border);box-shadow:0 22px 60px rgba(15,23,42,0.95);backdrop-filter:blur(18px);}  
+    .badge-pill{border-radius:999px;padding:.18rem .9rem;border:1px solid rgba(148,163,184,0.65);background:linear-gradient(to right,rgba(15,23,42,0.85),rgba(15,23,42,0.5));}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.2s!important;}}
+  </style>
+</head>
+<body>
+<div class="mouse-spotlight"></div>
+<div class="deck">
+
+  <!-- Slide 1: Title -->
+  <div class="slide slide-1 active" data-slide="1">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:520px;height:520px;top:-140px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:360px;height:360px;bottom:-120px;left:-100px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+      <div class="blob" style="width:260px;height:260px;top:55%;left:10%;background:radial-gradient(circle,#D4A017,#fb7185);"></div>
+    </div>
+    <div class="content flex flex-col items-center text-center">
+      <div class="inline-flex items-center gap-2 badge-pill text-xs tracking-[0.22em] uppercase text-text-muted mb-4 reveal">
+        <span class="w-1.5 h-1.5 rounded-full bg-accent-1"></span>
+        <span>Strategi Percepatan Enrollment UKWMS</span>
+      </div>
+      <h1 class="font-display text-[clamp(2.6rem,5.2vw,4.4rem)] font-black bg-linear-to-br from-accent-1 via-accent-2 to-accent-1 bg-clip-text text-transparent tracking-tight mb-4 reveal">
+        Dari Krisis Pendaftar<br class="hidden sm:inline" />
+        ke Ekosistem Futuristik UKWMS
+      </h1>
+      <p class="max-w-3xl text-[clamp(0.95rem,1.4vw,1.15rem)] text-text-secondary leading-relaxed text-balance reveal">
+        Menjawab penurunan ~30% pendaftar dalam dua tahun terakhir dengan mengubah UKWMS dari sekadar “tempat kuliah”
+        menjadi ekosistem yang langsung menciptakan nilai ekonomi dan jalur karier nyata bagi mahasiswa.
+      </p>
+    </div>
+  </div>
+
+  <!-- Slide 2: Context & Problem -->
+  <div class="slide slide-2" data-slide="2">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:420px;height:420px;top:-120px;right:-140px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:300px;height:300px;bottom:-120px;left:-60px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Konteks & Masalah</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">
+        Kenapa Enrollment Turun? Masalahnya Bukan Sekadar Promosi
+      </h2>
+      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">
+        UKWMS mengalami penurunan pendaftar sekitar 30% dalam dua tahun terakhir—sejalan dengan tekanan yang juga dialami
+        banyak perguruan tinggi swasta—di tengah naiknya jalur mandiri PTN dan alternatif pendidikan digital.
+      </p>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Tren nasional:</span> banyak PTS mengalami penurunan peminat, sementara jalur mandiri PTN dan bootcamp digital
+            makin agresif menawarkan jalan pintas ke dunia kerja.</li>
+        <li><span class="font-semibold">Realitas UKWMS:</span> dari rata-rata ±1000 pendaftar per tahun, dua tahun terakhir turun ke kisaran ±700 pendaftar per tahun ajaran.</li>
+        <li><span class="font-semibold">Persepsi pasar:</span> orang tua dan siswa mulai mempertanyakan <em>return on investment</em> kuliah jika outcome karier dan nilai tambah ekonominya
+            tidak terlihat jelas.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 3: Insight Gen Z & Orang Tua -->
+  <div class="slide slide-3" data-slide="3">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:420px;height:420px;top:-120px;right:-140px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-120px;left:-60px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Insight Pasar</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">
+        Apa Sebenarnya Dicari Gen Z dan Orang Tua?
+      </h2>
+      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">
+        Gen Z dan orang tua tidak lagi puas dengan brosur dan akreditasi; yang dicari adalah relevansi nyata dan kejelasan masa depan.
+      </p>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Gen Z:</span> ingin skill yang cepat terpakai, pengalaman nyata, dan ruang berkarya lintas disiplin—bukan hanya nilai raport.</li>
+        <li><span class="font-semibold">Orang tua:</span> membutuhkan kepastian biaya yang rasional dan jalur karier yang jelas, bukan hanya janji umum di brosur.</li>
+        <li><span class="font-semibold">Kesimpulan:</span> kampus yang menang adalah kampus yang paling meyakinkan dalam menciptakan nilai nyata bagi masa depan anak
+            dan ekonomi keluarga.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 4: Vision -->
+  <div class="slide slide-4" data-slide="4">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:460px;height:460px;top:-140px;right:-140px;background:radial-gradient(circle,#22C55E,#8BC34A);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-120px;left:-80px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Visi Reposisi</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">
+        Reposisi UKWMS: Dari Tempat Kuliah ke Ekosistem Nilai
+      </h2>
+      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">
+        Strategi ini mendesain ulang hubungan kampus–mahasiswa–keluarga–industri, sehingga setiap pihak merasakan
+        manfaat konkret sejak awal perjalanan perkuliahan.
+      </p>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Early-engagement sejak SMA:</span> mengunci komitmen calon mahasiswa melalui sandbox inovasi dan program bridging
+            yang kredibel secara RPL.</li>
+        <li><span class="font-semibold">Ekosistem inklusi finansial:</span> mengajarkan mahasiswa mengelola keuangan dan mengangkat ekonomi keluarga/UMKM
+            sejak semester awal.</li>
+        <li><span class="font-semibold">Integrasi karier berjenjang:</span> menghubungkan perkuliahan dengan micro-agency kampus dan beasiswa ikatan dinas
+            yang jelas jalurnya.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 5: Tiga Pilar -->
+  <div class="slide slide-5" data-slide="5">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:420px;height:420px;top:-120px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:300px;height:300px;bottom:-120px;left:-60px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Gambaran Besar</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-5 reveal">
+        Mesin Peningkat Enrollment: Tiga Pilar Terintegrasi
+      </h2>
+      <div class="grid md:grid-cols-3 gap-5 mt-2">
+        <div class="glass-panel rounded-2xl p-5 md:p-6 border border-accent-1/40 reveal">
+          <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 1 – Early-Engagement Funnel</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">
+            Widya Mandala Innovator Sandbox dan Bridging Program Kelas Akselerasi berbasis RPL untuk meng-upgrade PMB
+            menjadi seleksi berbasis karya dan komitmen jangka panjang.
+          </p>
+        </div>
+        <div class="glass-panel rounded-2xl p-5 md:p-6 border border-accent-1/40 reveal">
+          <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 2 – Inclusive & Ethical Value</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">
+            Women & Youth Financial Inclusivity Hub dan Invezthink Financial Literacy & Entrepreneur Track untuk membangun
+            diferensiasi nilai kampus yang humanis dan solutif.
+          </p>
+        </div>
+        <div class="glass-panel rounded-2xl p-5 md:p-6 border border-accent-1/40 reveal">
+          <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 3 – Sustainable Career Integration</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">
+            AI-Driven Campus Micro-Agency dan Corporate-Bonded Scholarship untuk mengamankan jalur karier nyata sejak hari
+            pertama kuliah.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Pilar 1 Konsep -->
+  <div class="slide slide-6" data-slide="6">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:420px;height:420px;top:-120px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:280px;height:280px;bottom:-110px;left:-70px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 1 – Early-Engagement Funnel</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">
+        Mengunci Komitmen Sejak SMA dengan Seleksi Berbasis Karya
+      </h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Widya Mandala Innovator Sandbox:</span> seleksi calon mahasiswa berbasis portofolio karya
+            (projek, video, prototype, bisnis kecil) yang difilter oleh AI Video Interview dan sesi <em>live defending</em> singkat.</li>
+        <li><span class="font-semibold">Bridging Program Kelas Akselerasi:</span> siswa kelas XII dapat mulai “menabung SKS” melalui modul
+            terstruktur yang sah dalam kerangka Rekognisi Pembelajaran Lampau (RPL).</li>
+        <li><span class="font-semibold">Outcome:</span> calon mahasiswa sudah merasa menjadi bagian dari UKWMS bahkan sebelum lulus SMA,
+            sehingga lebih sulit berpindah ke kampus atau jalur lain.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 7: Pilar 1 Flow -->
+  <div class="slide slide-7" data-slide="7">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:420px;height:420px;top:-120px;right:-140px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-120px;left:-60px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 1 – Journey Siswa SMA</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">
+        Alur Praktis dari Perspektif Siswa SMA
+      </h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li>Daftar ke <span class="font-semibold">Innovator Sandbox UKWMS</span> melalui kanal online yang mudah diakses guru BK dan siswa.</li>
+        <li>Mengirim <span class="font-semibold">portofolio karya</span> (video, projek, karya multimedia, bisnis keluarga, dsb.) dan mengikuti AI Video Interview
+            serta sesi singkat dengan dosen.</li>
+        <li>Mendapatkan <span class="font-semibold">sertifikat + kredit RPL / modul akselerasi</span> yang bisa dikonversi menjadi SKS ketika resmi mendaftar di UKWMS.</li>
+        <li>Di akhir proses, siswa tidak hanya “diterima”, tetapi merasa sudah berinvestasi waktu dan karya di UKWMS.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 8: Pilar 2 Konsep -->
+  <div class="slide slide-8" data-slide="8">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:440px;height:440px;top:-140px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-110px;left:-70px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 2 – Inclusive & Ethical Value</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">
+        Nilai Tambah Sejak Semester Satu: Inklusif dan Etis
+      </h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Women & Youth Financial Inclusivity Hub:</span> ruang belajar dan pendampingan finansial bagi perempuan dan pemuda,
+            lintas prodi, dengan pendekatan praktis dan sensitif konteks keluarga.</li>
+        <li><span class="font-semibold">Invezthink Financial Literacy & Entrepreneur Track:</span> kurikulum micro-modul yang mengajarkan pengelolaan uang,
+            mitigasi risiko, dan perencanaan usaha menggunakan simulasi investasi yang aman dan patuh regulasi.</li>
+        <li><span class="font-semibold">Fokus etika:</span> instrumen spekulatif berisiko tinggi dibatasi; micro-grant diarahkan hanya ke bisnis riil dan aktivitas produktif.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 9: Pilar 2 Dampak -->
+  <div class="slide slide-9" data-slide="9">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:420px;height:420px;top:-130px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-110px;left:-70px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 2 – Dampak</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">
+        Dari Kelas ke Meja Makan Keluarga
+      </h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li>Mahasiswa membantu orang tua menyusun ulang arus kas keluarga, mengurangi beban cicilan konsumtif,
+            dan mulai menabung dengan pola yang sehat.</li>
+        <li>Mahasiswa mendampingi UMKM sekitar kampus/rumah dalam pencatatan sederhana, penentuan harga,
+            dan perencanaan ekspansi kecil.</li>
+        <li>Kisah sukses mahasiswa dan keluarga ini dapat diangkat sebagai <span class="font-semibold">cerita kampanye UKWMS</span>
+            yang menyentuh emosi orang tua calon pendaftar.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 10: Pilar 3 Konsep -->
+  <div class="slide slide-10" data-slide="10">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:440px;height:440px;top:-140px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-110px;left:-70px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 3 – Sustainable Career Integration</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">
+        Karier yang Terdesain, Bukan Kebetulan
+      </h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">AI-Driven Campus Micro-Agency:</span> unit internal yang mengerjakan proyek digital
+            (konten, analitik, otomasi sederhana, riset pasar) untuk UMKM dan partner industri, dikelola mahasiswa lintas prodi.</li>
+        <li><span class="font-semibold">Corporate-Bonded Scholarship:</span> skema beasiswa ikatan dinas dengan klausul yang jelas,
+            termasuk mekanisme buy-out yang adil jika mahasiswa ingin beralih jalur.</li>
+        <li><span class="font-semibold">Hasilnya:</span> mahasiswa tidak lagi bertanya “lulus nanti kerja apa?”, karena dari awal sudah berjalan di jalur karier tertentu.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 11: Pilar 3 Jalur Karier -->
+  <div class="slide slide-11" data-slide="11">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:420px;height:420px;top:-130px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-110px;left:-70px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 3 – Jalur Karier</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">
+        Visual Jalur Karier: Dari Semester Awal ke Dunia Kerja
+      </h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Track Micro-Agency:</span> Semester 1–2: training & proyek kecil internal → Semester 3–5: menangani klien UMKM/mitra kampus
+            → Semester 6 ke atas: portofolio kuat untuk kerja atau membangun usaha sendiri.</li>
+        <li><span class="font-semibold">Track Corporate-Bonded:</span> seleksi awal → beasiswa & mentoring dari perusahaan partner → jalur rekrutmen prioritas setelah lulus
+            dengan opsi buy-out yang disepakati sejak awal.</li>
+        <li><span class="font-semibold">Hybrid:</span> mahasiswa dapat berpindah atau mengombinasikan keduanya sesuai performa dan minat.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 12: Why Now -->
+  <div class="slide slide-12" data-slide="12">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:440px;height:440px;top:-140px;right:-120px;background:radial-gradient(circle,#22C55E,#8BC34A);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-110px;left:-80px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Mengapa Sekarang?</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">
+        Mengapa Program Ini Tepat untuk UKWMS, dan Tepat Dilakukan Sekarang
+      </h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Zero–Low Internal Budget:</span> pendanaan bertumpu pada Co-Branding CSR industri, monetisasi modul SMA,
+            dan otomatisasi AI sehingga tidak menekan anggaran operasional kampus.</li>
+        <li><span class="font-semibold">Strict Regulatory & Governance Compliance:</span> desain mematuhi rambu Kemendikbudristek (RPL/PDDIKTI), OJK,
+            dan prinsip perlindungan data: batas instrumen, NDA studi kasus, dan dokumentasi RPL yang jelas.</li>
+        <li><span class="font-semibold">High Emotional & Practical Impact:</span> menyentuh kekhawatiran orang tua, aspirasi Gen Z,
+            dan kebutuhan ekonomi lokal secara bersamaan—bukan program gimmick yang mudah dilupakan.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 13: Roadmap -->
+  <div class="slide slide-13" data-slide="13">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:420px;height:420px;top:-130px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-110px;left:-70px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Roadmap Implementasi</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">
+        Roadmap 2 Siklus PMB: Mulai Kecil, Dampak Terukur
+      </h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Tahun 1 (Pilot):</span> implementasi sandbox + bridging di beberapa sekolah mitra; pilot Women & Youth Financial Inclusivity Hub
+            dan track Invezthink di 1–2 prodi; peluncuran awal micro-agency dengan beberapa UMKM Surabaya.</li>
+        <li><span class="font-semibold">Tahun 2 (Scale-Up):</span> perluasan ke lebih banyak sekolah mitra dan prodi lintas fakultas; batch pertama Corporate-Bonded Scholarship
+            dengan mitra industri; penyesuaian kurikulum dan SOP berdasarkan data evaluasi tahun pertama.</li>
+        <li><span class="font-semibold">Prinsip desain:</span> iteratif, bisa disesuaikan sambil berjalan—bukan pendekatan “big bang” yang berisiko tinggi.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 14: Ask / Mandate -->
+  <div class="slide slide-14" data-slide="14">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:440px;height:440px;top:-140px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-110px;left:-80px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Mandat yang Diperlukan</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">
+        Apa yang Kami Minta dari Pimpinan UKWMS
+      </h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Mandat lintas unit:</span> dukungan formal untuk menyatukan akademik, PMB, kemahasiswaan,
+            dan kemitraan industri di bawah satu payung program ini.</li>
+        <li><span class="font-semibold">Komitmen eksekusi minimal dua siklus PMB:</span> agar desain sistem ini punya waktu cukup
+            untuk menunjukkan dampak nyata terhadap angka pendaftar dan kualitas mahasiswa.</li>
+        <li><span class="font-semibold">Kolaborasi desain & eksekusi:</span> sisi teknologi, operasional, dan model bisnis siap
+            kami bangun dan iterasikan bersama—dengan UKWMS sebagai rumah akademiknya.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav-controls">
+  <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+  <span class="slide-counter" id="counter">1 / 14</span>
+</div>
+
+<script>
+  let current = 1;
+  const total = document.querySelectorAll('.slide').length;
+  const dotsContainer = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  for (let i = 1; i <= total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 1 ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dotsContainer.appendChild(dot);
+  }
+  function goToSlide(n) {
+    const prev = document.querySelector('.slide.active');
+    const next = document.querySelector(`.slide[data-slide="${n}"]`);
+    if (prev) prev.classList.remove('active');
+    if (next) { next.classList.add('active'); animateSlide(next); }
+    current = n; updateNav();
+  }
+  function changeSlide(dir) {
+    let next = current + dir;
+    if (next < 1) next = total;
+    if (next > total) next = 1;
+    goToSlide(next);
+  }
+  function updateNav() {
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i + 1 === current);
+    });
+    counter.textContent = current + ' / ' + total;
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+  });
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+  });
+  function animateSlide(slide) {
+    slide.querySelectorAll('.reveal').forEach((el, i) => {
+      el.style.transition = 'none';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(18px)';
+      el.offsetHeight;
+      const delay = i * 0.08;
+      el.style.transition = `opacity 0.4s ease ${delay}s, transform 0.4s ease ${delay}s`;
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    });
+  }
+  const spotlight = document.querySelector('.mouse-spotlight');
+  document.addEventListener('mousemove', (e) => {
+    const rgb = getComputedStyle(document.documentElement).getPropertyValue('--glow-color-rgb').trim() || '139,195,74';
+    spotlight.style.background = `radial-gradient(420px circle at ${e.clientX}px ${e.clientY}px, rgba(${rgb},0.16), transparent 60%)`;
+  });
+  animateSlide(document.querySelector('.slide.active'));
+</script>
+</body>
+</html>

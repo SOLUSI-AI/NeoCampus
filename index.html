@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="slides-format" content="viewport" />
+  <title>Strategi Percepatan Enrollment UKWMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #0f172a;
+      --color-bg-deep: #020617;
+      --color-surface: #1f2937;
+      --color-text: #f9fafb;
+      --color-text-secondary: #f1f5f9;
+      --color-text-muted: #94a3b8;
+      --color-accent-1: #8BC34A;
+      --color-accent-2: #F5F0D0;
+      --color-accent-3: #D4A017;
+      --color-glass-bg: rgba(15, 23, 42, 0.98);
+      --color-glass-border: rgba(148, 163, 184, 0.4);
+      --color-vignette: rgba(0,0,0,0.7);
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg:#0f172a; --color-text:#f9fafb; --glow-color-rgb:139,195,74; }
+    *,*::before,*::after{box-sizing:border-box;}
+    html,body{margin:0;background:var(--color-bg);}  
+    body{font-family:var(--font-body);color:var(--color-text);overflow:hidden;height:100vh;width:100vw;}
+    .deck{width:100vw;height:100vh;position:relative;}
+    .slide{position:absolute;inset:0;background:radial-gradient(circle at top,#111827 0,#020617 58%);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.95);transition:opacity .7s ease,transform .7s ease;pointer-events:none;overflow:hidden;}
+    .slide.active{opacity:1;transform:scale(1);pointer-events:auto;}
+    .slide>.content{position:relative;z-index:2;width:100%;max-width:1100px;padding:clamp(1.8rem,4vw,4rem); padding-bottom:clamp(5rem,10vh,6.5rem); overflow-y: auto; max-height: 85vh;}
+    .nav-controls{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;z-index:100;background:rgba(15,23,42,0.9);backdrop-filter:blur(14px);padding:10px 22px;border-radius:999px;border:1px solid rgba(148,163,184,0.55);box-shadow:0 18px 45px rgba(15,23,42,0.95); width: max-content; max-width: 95vw;}
+    .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:rgba(30,64,175,0.35);color:#e5fbea;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .25s,transform .25s,box-shadow .25s; flex-shrink: 0;}
+    .nav-btn:hover{background:rgba(56,189,248,0.9);transform:translateY(-1px);box-shadow:0 0 18px rgba(56,189,248,0.85);}  
+    .slide-dots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+    .slide-dots .dot{width:9px;height:9px;border-radius:999px;background:rgba(148,163,184,0.45);cursor:pointer;transition:background .3s,transform .3s;}
+    .slide-dots .dot.active{background:#8BC34A;transform:scale(1.35);}  
+    .slide-counter{font-size:.78rem;color:var(--color-text-muted);min-width:46px;text-align:center;font-variant-numeric:tabular-nums; white-space: nowrap;}
+    @media (max-width: 640px) {
+      .slide-dots { display: none; }
+      .nav-controls { gap: 24px; bottom: 16px; padding: 12px 24px; }
+      .slide>.content { max-height: 90vh; }
+    }
+    .reveal{opacity:0;transform:translateY(18px);}  
+    .gradient-mesh{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+    .blob{position:absolute;border-radius:999px;filter:blur(80px);opacity:.16;animation:float-slow 18s ease-in-out infinite;}
+    .blob:nth-child(2){animation-duration:22s;animation-direction:reverse;opacity:.12;}
+    .blob:nth-child(3){animation-duration:26s;opacity:.1;}
+    @keyframes float-slow{0%{transform:translate3d(0,0,0) scale(1);}25%{transform:translate3d(60px,-40px,0) scale(1.1);}50%{transform:translate3d(-50px,40px,0) scale(.96);}75%{transform:translate3d(40px,10px,0) scale(1.05);}100%{transform:translate3d(0,0,0) scale(1);}}
+    .slide::before{content:'';position:absolute;inset:-40px;z-index:1;pointer-events:none;background-image:radial-gradient(circle at 10% 0%,rgba(139,195,74,0.23) 0,transparent 55%),radial-gradient(circle at 90% 100%,rgba(245,240,208,0.24) 0,transparent 55%);mix-blend-mode:screen;opacity:.6;}
+    .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,var(--color-vignette) 100%);}  
+    .mouse-spotlight{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:.65;}
+    .glass-panel{background:rgba(15, 23, 42, 0.85);border:1px solid var(--color-glass-border);box-shadow:0 22px 60px rgba(15,23,42,0.95);backdrop-filter:blur(18px);}  
+    .badge-pill{border-radius:999px;padding:.18rem .9rem;border:1px solid rgba(148,163,184,0.65);background:linear-gradient(to right,rgba(15,23,42,0.85),rgba(15,23,42,0.5));}
+    
+    .grid-menu-card{transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(148,163,184,0.15); background: rgba(30,41,59,0.3);}
+    .grid-menu-card:hover{transform: translateY(-4px); border-color: var(--color-accent-1); box-shadow: 0 15px 30px rgba(139,195,74,0.2); background: rgba(30,41,59,0.7);}
+    
+    .proposal-modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(2, 6, 23, 0.85);
+      z-index: -10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .proposal-modal.open {
+      pointer-events: auto;
+      opacity: 1;
+      z-index: 200;
+    }
+    .modal-box {
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .proposal-modal.open .modal-box {
+      transform: scale(1);
+    }
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.2s!important;}}
+  </style>
+</head>
+<body>
+<div class="mouse-spotlight"></div>
+<div class="deck">
+
+  <!-- =======================================================
+       SLIDE 1 - 14: STRATEGI UTAMA / MODAL PEMBUKAAN (UTUH)
+       ======================================================= -->
+  <div class="slide slide-1 active" data-slide="1">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:520px;height:520px;top:-140px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:360px;height:360px;bottom:-120px;left:-100px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+      <div class="blob" style="width:260px;height:260px;top:55%;left:10%;background:radial-gradient(circle,#D4A017,#fb7185);"></div>
+    </div>
+    <div class="content flex flex-col items-center text-center">
+      <div class="inline-flex items-center gap-2 badge-pill text-xs tracking-[0.22em] uppercase text-text-muted mb-4 reveal">
+        <span class="w-1.5 h-1.5 rounded-full bg-accent-1"></span>
+        <span>Strategi Percepatan Enrollment UKWMS</span>
+      </div>
+      <!-- MODIFIKASI TERKUNCI: Judul Besar Sesuai Request Baru Anda -->
+      <h1 class="font-display text-[clamp(2.2rem,4.5vw,4.4rem)] font-black bg-linear-to-br from-accent-1 via-accent-2 to-accent-1 bg-clip-text text-transparent tracking-tight mb-4 reveal">
+        Menuju Ekosistem Futuristik UKWMS:<br class="hidden sm:inline" />
+        Akselerasi Generasi Inovator Berbasis AI & FinTech
+      </h1>
+      <p class="max-w-3xl text-[clamp(0.95rem,1.4vw,1.15rem)] text-text-secondary leading-relaxed text-balance reveal">
+        Menjawab penurunan ~30% pendaftar dalam dua tahun terakhir dengan mengubah UKWMS dari sekadar “tempat kuliah”
+        menjadi ekosistem yang langsung menciptakan nilai ekonomi dan jalur karier nyata bagi mahasiswa.
+      </p>
+    </div>
+  </div>
+
+  <div class="slide slide-2" data-slide="2">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:420px;height:420px;top:-120px;right:-140px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
+      <div class="blob" style="width:300px;height:300px;bottom:-120px;left:-60px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+    </div>
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Konteks & Masalah</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">Kenapa Enrollment Turun? Masalahnya Bukan Sekadar Promosi</h2>
+      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">UKWMS mengalami penurunan pendaftar sekitar 30% dalam dua tahun terakhir—sejalan dengan tekanan yang juga dialami banyak perguruan tinggi swasta—di tengah naiknya jalur mandiri PTN dan alternatif pendidikan digital.</p>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Tren nasional:</span> banyak PTS mengalami penurunan peminat, sementara jalur mandiri PTN dan bootcamp digital makin agresif menawarkan jalan pintas ke dunia kerja.</li>
+        <li><span class="font-semibold">Realitas UKWMS:</span> dari rata-rata ±1000 pendaftar per tahun, dua tahun terakhir turun ke kisaran ±700 pendaftar per tahun ajaran.</li>
+        <li><span class="font-semibold">Persepsi pasar:</span> orang tua dan siswa mulai mempertanyakan <em>return on investment</em> kuliah jika outcome karier dan nilai tambah ekonominya tidak terlihat jelas.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-3" data-slide="3">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Insight Pasar</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">Apa Sebenarnya Dicari Gen Z dan Orang Tua?</h2>
+      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">Gen Z dan orang tua tidak lagi puas dengan brosur dan akreditasi; yang dicari adalah relevansi nyata dan kejelasan masa depan.</p>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Gen Z:</span> ingin skill yang cepat terpakai, pengalaman nyata, dan ruang berkarya lintas disiplin—bukan hanya nilai raport.</li>
+        <li><span class="font-semibold">Orang tua:</span> membutuhkan kepastian biaya yang rasional dan jalur karier yang jelas, bukan hanya janji umum di brosur.</li>
+        <li><span class="font-semibold">Kesimpulan:</span> kampus yang menang adalah kampus yang paling meyakinkan dalam menciptakan nilai nyata bagi masa depan anak dan ekonomi keluarga.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-4" data-slide="4">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Visi Reposisi</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">Reposisi UKWMS: Dari Tempat Kuliah ke Ekosistem Nilai</h2>
+      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">Strategi ini mendesain ulang hubungan kampus–mahasiswa–keluarga–industri, sehingga setiap pihak merasakan manfaat konkret sejak awal perjalanan perkuliahan.</p>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Early-engagement sejak SMA:</span> mengunci komitmen calon mahasiswa melalui sandbox inovasi dan program bridging yang kredibel secara RPL.</li>
+        <li><span class="font-semibold">Ekosistem inklusi finansial:</span> mengajarkan mahasiswa mengelola keuangan dan mengangkat ekonomi keluarga/UMKM sejak semester awal.</li>
+        <li><span class="font-semibold">Integrasi karier berjenjang:</span> menghubungkan perkuliahan dengan micro-agency kampus dan beasiswa ikatan dinas yang jelas jalurnya.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-5" data-slide="5">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Gambaran Besar</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-5 reveal">Mesin Peningkat Enrollment: Tiga Pilar Terintegrasi</h2>
+      <div class="grid md:grid-cols-3 gap-5 mt-2">
+        <div class="glass-panel rounded-2xl p-5 md:p-6 border border-accent-1/40 reveal">
+          <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 1 – Early-Engagement Funnel</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Widya Mandala Innovator Sandbox dan Bridging Program Kelas Akselerasi berbasis RPL untuk meng-upgrade PMB menjadi seleksi berbasis karya dan komitmen jangka panjang.</p>
+        </div>
+        <div class="glass-panel rounded-2xl p-5 md:p-6 border border-accent-1/40 reveal">
+          <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 2 – Inclusive & Ethical Value</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Women & Youth Financial Inclusivity Hub dan Invezthink Financial Literacy & Entrepreneur Track untuk membangun diferensiasi nilai kampus yang humanis dan solutif.</p>
+        </div>
+        <div class="glass-panel rounded-2xl p-5 md:p-6 border border-accent-1/40 reveal">
+          <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 3 – Sustainable Career Integration</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">AI-Driven Campus Micro-Agency dan Corporate-Bonded Scholarship untuk mengamankan jalur karier nyata sejak hari pertama kuliah.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide slide-6" data-slide="6">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 1 – Early-Engagement Funnel</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Mengunci Komitmen Sejak SMA dengan Seleksi Berbasis Karya</h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Widya Mandala Innovator Sandbox:</span> seleksi calon mahasiswa berbasis portofolio karya (projek, video, prototype, bisnis kecil) yang difilter oleh AI Video Interview dan sesi <em>live defending</em> singkat.</li>
+        <li><span class="font-semibold">Bridging Program Kelas Akselerasi:</span> siswa kelas XII dapat mulai “menabung SKS” melalui modul terstruktur yang sah dalam kerangka Rekognisi Pembelajaran Lampau (RPL).</li>
+        <li><span class="font-semibold">Outcome:</span> calon mahasiswa sudah merasa menjadi bagian dari UKWMS bahkan sebelum lulus SMA, sehingga lebih sulit berpindah ke kampus atau jalur lain.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-7" data-slide="7">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 1 – Journey Siswa SMA</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Alur Praktis dari Perspektif Siswa SMA</h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li>Daftar ke <span class="font-semibold">Innovator Sandbox UKWMS</span> melalui kanal online yang mudah diakses guru BK dan siswa.</li>
+        <li>Mengirim <span class="font-semibold">portofolio karya</span> (video, projek, karya multimedia, bisnis keluarga, dsb.) and mengikuti AI Video Interview serta sesi singkat dengan dosen.</li>
+        <li>Mendapatkan <span class="font-semibold">sertifikat + kredit RPL / modul akselerasi</span> yang bisa dikonversi menjadi SKS ketika resmi mendaftar di UKWMS.</li>
+        <li>Di akhir proses, siswa tidak hanya “diterima”, tetapi merasa sudah berinvestasi waktu dan karya di UKWMS.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-8" data-slide="8">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 2 – Inclusive & Ethical Value</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Nilai Tambah Sejak Semester Satu: Inklusif dan Etis</h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Women & Youth Financial Inclusivity Hub:</span> ruang belajar dan pendampingan finansial bagi perempuan dan pemuda, lintas prodi, dengan pendekatan praktis dan sensitif konteks keluarga.</li>
+        <li><span class="font-semibold">Invezthink Financial Literacy & Entrepreneur Track:</span> kurikulum micro-modul yang mengajarkan pengelolaan uang, mitigasi risiko, dan perencanaan usaha menggunakan simulasi investasi yang aman dan patuh regulasi.</li>
+        <li><span class="font-semibold">Fokus etika:</span> instrumen spekulatif berisiko tinggi dibatasi; micro-grant diarahkan hanya ke bisnis riil dan aktivitas produktif.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-9" data-slide="9">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 2 – Dampak</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Dari Kelas ke Meja Makan Keluarga</h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li>Mahasiswa membantu orang tua menyusun ulang arus kas keluarga, mengurangi beban cicilan konsumtif, dan mulai menabung dengan pola yang sehat.</li>
+        <li>Mahasiswa mendampingi UMKM sekitar kampus/rumah dalam pencatatan sederhana, penentuan harga, dan perencanaan ekspansi kecil.</li>
+        <li>Kisah sukses mahasiswa dan keluarga ini dapat diangkat sebagai <span class="font-semibold">cerita kampanye UKWMS</span> yang menyentuh emosi orang tua calon pendaftar.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-10" data-slide="10">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 3 – Sustainable Career Integration</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Karier yang Terdesain, Bukan Kebetulan</h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">AI-Driven Campus Micro-Agency:</span> unit internal yang mengerjakan proyek digital (konten, analitik, otomasi sederhana, riset pasar) untuk UMKM dan partner industri, dikelola mahasiswa lintas prodi.</li>
+        <li><span class="font-semibold">Corporate-Bonded Scholarship:</span> skema beasiswa ikatan dinas dengan klausul yang jelas, termasuk mekanisme buy-out yang adil jika mahasiswa ingin beralih jalur.</li>
+        <li><span class="font-semibold">Hasilnya:</span> mahasiswa tidak lagi bertanya “lulus nanti kerja apa?”, karena dari awal sudah berjalan di jalur karier tertentu.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-11" data-slide="11">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 3 – Jalur Karier</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Visual Jalur Karier: Dari Semester Awal ke Dunia Kerja</h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Track Micro-Agency:</span> Semester 1–2: training & proyek kecil internal → Semester 3–5: menangani klien UMKM/mitra kampus → Semester 6 ke atas: portofolio kuat untuk kerja atau membangun usaha sendiri.</li>
+        <li><span class="font-semibold">Track Corporate-Bonded:</span> seleksi awal → beasiswa & mentoring dari perusahaan partner → jalur rekrutmen prioritas setelah lulus dengan opsi buy-out yang disepakati sejak awal.</li>
+        <li><span class="font-semibold">Hybrid:</span> mahasiswa dapat berpindah atau mengombinasikan keduanya sesuai performa dan minat.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-12" data-slide="12">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Mengapa Sekarang?</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Mengapa Program Ini Tepat untuk UKWMS, dan Tepat Dilakukan Sekarang</h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Zero–Low Internal Budget:</span> pendanaan bertumpu pada Co-Branding CSR industri, monetisasi modul SMA, dan otomatisasi AI sehingga tidak menekan anggaran operasional kampus.</li>
+        <li><span class="font-semibold">Strict Regulatory & Governance Compliance:</span> desain mematuhi rambu Kemendikbudristek (RPL/PDDIKTI), OJK, dan prinsip perlindungan data: batas instrumen, NDA studi kasus, dan dokumentasi RPL yang jelas.</li>
+        <li><span class="font-semibold">High Emotional & Practical Impact:</span> menyentuh kekhawatiran orang tua, aspirasi Gen Z, dan kebutuhan ekonomi lokal secara bersamaan—bukan program gimmick yang mudah dilupakan.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-13" data-slide="13">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Roadmap Implementasi</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Roadmap 2 Siklus PMB: Mulai Kecil, Dampak Terukur</h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Tahun 1 (Pilot):</span> implementasi sandbox + bridging di beberapa sekolah mitra; pilot Women & Youth Financial Inclusivity Hub dan track Invezthink di 1–2 prodi; peluncuran awal micro-agency dengan beberapa UMKM Surabaya.</li>
+        <li><span class="font-semibold">Tahun 2 (Scale-Up):</span> perluasan ke lebih banyak sekolah mitra dan prodi lintas fakultas; batch pertama Corporate-Bonded Scholarship dengan mitra industri; penyesuaian kurikulum dan SOP berdasarkan data evaluasi tahun pertama.</li>
+        <li><span class="font-semibold">Prinsip desain:</span> iteratif, bisa disesuaikan sambil berjalan—bukan pendekatan “big bang” yang berisiko tinggi.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide slide-14" data-slide="14">
+    <div class="content">
+      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Mandat yang Diperlukan</p>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Apa yang Kami Minta dari Pimpinan UKWMS</h2>
+      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
+        <li><span class="font-semibold">Mandat lintas unit:</span> dukungan formal untuk menyatukan akademik, PMB, kemahasiswaan, dan kemitraan industri di bawah satu payung program ini.</li>
+        <li><span class="font-semibold">Komitmen eksekusi minimal dua siklus PMB:</span> agar desain sistem ini punya waktu cukup untuk menunjukkan dampak nyata terhadap angka pendaftar dan kualitas mahasiswa.</li>
+        <li><span class="font-semibold">Kolaborasi desain & eksekusi:</span> sisi teknologi, operasional, dan model bisnis siap kami bangun dan iterasikan bersama—dengan UKWMS sebagai rumah akademiknya.</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- =======================================================
+       SLIDE 15: PORTAL DASHBOARD UTAMA (SLIDE PENUTUP MAKSIMAL)
+       ======================================================= -->
+  <div class="slide slide-15" data-slide="15">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:450px;height:450px;top:-100px;right:-100px;background:radial-gradient(circle,#8BC34A,transparent 65%);"></div>
+    </div>
+    <div class="content">
+      <div class="inline-flex items-center gap-2 badge-pill text-xs tracking-[0.22em] uppercase text-accent-1 mb-3 reveal">
+        <span>Strategic Proposal Appendix Portal</span>
+      </div>
+      <h2 class="font-display text-[clamp(2.2rem,4.5vw,3.2rem)] font-bold mb-2 reveal">Lampiran Dokumen Teknis Rencana Program</h2>
+      <p class="text-xs md:text-sm text-text-muted mb-6 max-w-2xl reveal">Klik kartu di bawah untuk membuka *Deep-Dive Portal* terpisah. Menampilkan blueprint utuh, kurikulum, standarisasi etika, dan kepatuhan hukum dari 8 usulan program.</p>
+      
+      <!-- Grid Menu Cantik Terpisah -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 reveal">
+        <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-sandbox')">
+          <div>
+            <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 01</div>
+            <h3 class="text-xs font-bold text-text leading-tight">Innovator Sandbox & PoW</h3>
+          </div>
+          <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
+        </div>
+        <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-nanodegree')">
+          <div>
+            <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 02</div>
+            <h3 class="text-xs font-bold text-text leading-tight">Hybrid Nano-Degree SMA</h3>
+          </div>
+          <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
+        </div>
+        <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-financial')">
+          <div>
+            <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 03</div>
+            <h3 class="text-xs font-bold text-text leading-tight">Invezthink FinLit Track</h3>
+          </div>
+          <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
+        </div>
+        <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-agency')">
+          <div>
+            <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 04</div>
+            <h3 class="text-xs font-bold text-text leading-tight">Campus Micro-Agency</h3>
+          </div>
+          <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
+        </div>
+        <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-bonded')">
+          <div>
+            <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 05</div>
+            <h3 class="text-xs font-bold text-text leading-tight">Corporate-Bonded Track</h3>
+          </div>
+          <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
+        </div>
+        <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-womenhub')">
+          <div>
+            <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 06</div>
+            <h3 class="text-xs font-bold text-text leading-tight">Women & Youth Hub</h3>
+          </div>
+          <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
+        </div>
+        <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-ambassador')">
+          <div>
+            <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 07</div>
+            <h3 class="text-xs font-bold text-text leading-tight">Student Ambassador</h3>
+          </div>
+          <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
+        </div>
+        <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-greenledger')">
+          <div>
+            <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 08</div>
+            <h3 class="text-xs font-bold text-text leading-tight">Green Ledger Campus</h3>
+          </div>
+          <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     JENDELA MODAL TERPISAH (DEEP-DIVE PORTAL REFACTORED TONE)
+     ======================================================= -->
+
+<!-- MODAL PROGRAM 1: INNOVATOR SANDBOX -->
+<div id="modal-sandbox" class="proposal-modal">
+  <div class="modal-box glass-panel w-[92vw] sm:w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative border border-glass-border">
+    <button class="absolute top-4 right-4 text-text-muted hover:text-accent-1 text-xl font-bold cursor-pointer" onclick="closeModal('modal-sandbox')">✕</button>
+    <div class="text-xs uppercase text-accent-1 font-bold mb-1">Usulan Rencana Detail — Program 01</div>
+    <h3 class="font-display text-3xl font-bold mb-4 text-text pr-6">Widya Mandala Innovator Sandbox & Portofolio Karya Mandiri</h3>
+    
+    <div class="space-y-6 text-sm text-text-secondary leading-relaxed">
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">1. Latar Belakang & Diferensiasi Kompetensi Calon Mahasiswa</h4>
+        <p>Pola evaluasi pendaftaran konvensional berbasis transkrip nilai normatif dan berkas administrasi dapat ditingkatkan efektivitasnya dengan menyentuh preferensi karakter Gen Z. Generasi baru ini menunjukkan determinasi yang jauh lebih tinggi ketika diberikan ruang demonstrasi kecakapan, kepemilikan karya nyata, dan simulasi taktis langsung. UKWMS berpeluang memimpin ceruk pasar rekrutmen ini melalui standardisasi seleksi berbasis portofolio aplikatif yang terukur.</p>
+      </div>
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">2. Posisi Strategis Program dalam Alur PMB</h4>
+        <p>Aktivitas Sandbox didesain sebagai <strong>komponen pelengkap bernilai tambah</strong>, bukan instrumen substitusi jalur seleksi utama universitas. Penilaian berbasis portofolio ini dioptimasikan sebagai parameter penentu distribusi beasiswa prestasi akademik-nonakademik serta indikator penguat profil peminatan program studi calon pendaftar. Sasaran pengembangan fase awal ditargetkan pada ekosistem peminatan Teknologi Informasi, Keuangan Modern, Manajemen Inovasi, Bisnis Internasional, dan Komunikasi Korporat.</p>
+      </div>
+      
+      <!-- Visual Alur Murni HTML -->
+      <div class="bg-bg-deep/60 p-4 rounded-xl border border-glass-border my-4">
+        <h5 class="text-xs font-bold text-accent-1 uppercase mb-3 text-left">📈 Mekanisme Validasi Keaslian Karya & Pemahaman Solusi:</h5>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center text-xs">
+          <div class="bg-surface/80 p-3 rounded-lg border-l-4 border-accent-1">
+            <span class="font-black text-accent-1 block mb-1">Fase 01</span>
+            <strong>Konseptualisasi Solusi</strong>
+            <p class="text-[10px] text-text-muted mt-1 font-normal">Kandidat merumuskan pemecahan masalah atas studi kasus riil (sektor keuangan UMKM, pemodelan data basis digital, atau analisis audiens promosi) dipandu sistem AI Mentor.</p>
+          </div>
+          <div class="bg-surface/80 p-3 rounded-lg border-l-4 border-accent-1">
+            <span class="font-black text-accent-1 block mb-1">Fase 02</span>
+            <strong>Asesmen Komunikasi Video</strong>
+            <p class="text-[10px] text-text-muted mt-1 font-normal">Peserta terpilih mendokumentasikan argumentasi logika solusi berdurasi pendek secara asinkron. Sistem melakukan validasi keselarasan konseptual atas parameter penilaian awal.</p>
+          </div>
+          <div class="bg-surface/80 p-3 rounded-lg border-l-4 border-accent-1">
+            <span class="font-black text-accent-1 block mb-1">Fase 03</span>
+            <strong>Konfirmasi & Asesmen Live</strong>
+            <p class="text-[10px] text-text-muted mt-1 font-normal">Sesi review langsung selama 10 menit bersama tim reviewer akademik eksekutif untuk memverifikasi kedalaman retensi ilmu, originalitas karya, dan validasi kompetensi riil siswa.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">3. Parameter Evaluasi & Manajemen Risiko Tata Kelola</h4>
+        <p>Rubrik standardisasi mencakup kualitas pragmatis output akhir, intensitas rekam jejak penyempurnaan draf, serta penguasaan materi pada saat review konfirmasi. Kandidat dengan performa unggul berhak mendapatkan insentif beasiswa parsial hingga penuh. Mitigasi tata kelola internal mensyaratkan standarisasi rubrik objektif antar penguji, pemeliharaan arsitektur platform yang andal, and integrasi kuota bersama tim operasional admisi eksisting.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROGRAM 2: HYBRID NANO-DEGREE -->
+<div id="modal-nanodegree" class="proposal-modal">
+  <div class="modal-box glass-panel w-[92vw] sm:w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative border border-glass-border">
+    <button class="absolute top-4 right-4 text-text-muted hover:text-accent-1 text-xl font-bold cursor-pointer" onclick="closeModal('modal-nanodegree')">✕</button>
+    <div class="text-xs uppercase text-accent-1 font-bold mb-1">Usulan Rencana Detail — Program 02</div>
+    <h3 class="font-display text-3xl font-bold mb-4 text-text pr-6">Hybrid Nano-Degree & Program Kemitraan Pra-Sarjana SMA</h3>
+    
+    <div class="space-y-6 text-sm text-text-secondary leading-relaxed">
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">1. Pola Hubungan Berkelanjutan Sejak Pendidikan Menengah</h4>
+        <p>Penyusunan program ini memanfaatkan fleksibilitas regulasi <strong>Rekognisi Pembelajaran Lampau (RPL)</strong> untuk membangun komitmen studi dini bagi siswa jenjang menengah atas secara formal and bernilai ekonomis. Dengan mengonversi peminatan siswa ke dalam modul terstruktur berbobot ekuivalen 3-6 SKS, UKWMS memberikan jaminan proyeksi masa depan perkuliahan yang transparan sejak dini di bawah ekosistem pembelajaran digital kampus.</p>
+      </div>
+
+      <!-- Visual Grid Tabungan SKS -->
+      <div class="grid md:grid-cols-2 gap-4 my-4">
+        <div class="bg-bg-deep/50 p-4 rounded-xl border border-glass-border">
+          <h5 class="text-xs font-bold text-accent-1 uppercase mb-2">🎓 Contoh Klaster Modul Kompetensi Dasar:</h5>
+          <ul class="space-y-1 text-xs font-normal text-text-secondary">
+            <li>• <strong>Klaster TI:</strong> Otomasi Proses Bisnis & Dasar Rekayasa Prompt</li>
+            <li>• <strong>Klaster Keuangan:</strong> Literasi Aset Finansial Moderen & Manajemen Arus Kas</li>
+            <li>• <strong>Klaster Bisnis:</strong> Dasar Operasional Entitas Digital & Pemasaran Mikro</li>
+          </ul>
+        </div>
+        <div class="bg-accent-1/5 p-4 rounded-xl border border-accent-1/20">
+          <h5 class="text-xs font-bold text-accent-1 uppercase mb-2">💰 Model Pendanaan Kontribusi & Validasi Kredit SKS:</h5>
+          <p class="text-xs mb-1 font-normal">Biaya perolehan sertifikasi modul ditetapkan secara terjangkau. Seluruh nilai nominal kontribusi peserta pra-sarjana ini akan dikonversikan menjadi potongan pengurang biaya kuliah (credit voucher) secara langsung saat resmi mendaftar sebagai mahasiswa UKWMS.</p>
+          <p class="text-[10px] text-text-muted italic font-normal"><strong>Ketentuan Limitasi Waktu:</strong> Pengakuan kredit SKS berbasis modul kemitraan ini berlaku penuh maksimal 24 bulan pasca-kelulusan sekolah menengah atas.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">2. Standardisasi Infrastruktur Belajar & Tantangan Administrasi</h4>
+        <p>Arsitektur kurikulum mengutamakan efisiensi pemanfaatan Learning Management System (LMS) interaktif, asisten berbasis pengetahuan AI, sistem gamification capaian, serta grup diskusi terkelola. Manajemen universitas perlu mensinkronkan administrasi jalur RPL ini dengan pelaporan PDDIKTI, pembagian beban kerja dosen pengampu cohort, serta standardisasi asesmen ujian berkala.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROGRAM 3: FINANCIAL TRACK -->
+<div id="modal-financial" class="proposal-modal">
+  <div class="modal-box glass-panel w-[92vw] sm:w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative border border-glass-border">
+    <button class="absolute top-4 right-4 text-text-muted hover:text-accent-1 text-xl font-bold cursor-pointer" onclick="closeModal('modal-financial')">✕</button>
+    <div class="text-xs uppercase text-accent-1 font-bold mb-1">Usulan Rencana Detail — Program 03</div>
+    <h3 class="font-display text-3xl font-bold mb-4 text-text pr-6">Invezthink Financial Literacy & Peminatan Kompetensi Kewirausahaan</h3>
+    
+    <div class="space-y-6 text-sm text-text-secondary leading-relaxed">
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">1. Integrasi Keilmuan Lintas Prodi</h4>
+        <p>Menjawab kebutuhan mendasar wali murid mengenai jaminan kemandirian ekonomi lulusan. Program ini diintegrasikan sebagai peminatan minor pada kurikulum Fakultas Bisnis, atau opsi sertifikasi kompetensi pendamping ijazah bagi program studi non-ekonomi. Kurikulum memanfaatkan platform simulasi finansial Invezthink dan disusun secara berjenjang: pengelolaan anggaran dasar pada tingkat awal; manajemen portofolio risiko pada tingkat menengah; serta perancangan model bisnis sektor riil di tingkat lanjut.</p>
+      </div>
+
+      <!-- Visual Tabel Aturan Ketat -->
+      <div class="my-4">
+        <h5 class="text-xs font-bold text-accent-2 uppercase mb-2">⚖️ Kepatuhan Regulasi Keuangan & Alokasi Skema Hibah Kompetisi Usaha:</h5>
+        <p class="text-xs mb-3 font-normal">Selaras dengan regulasi otoritas keuangan nasional guna membatasi aktivitas pengelolaan dana publik, <strong>95% proses edukasi menggunakan modul inkubasi laboratorium non-transaksional</strong>. Hanya 5% menyentuh dana aktual yang disalurkan melalui mekanisme <strong>Hibah Stimulan Usaha Riil Berbasis Kompetisi Akademis (Rp 2-5 Juta per kelompok terpilih)</strong>.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-normal">
+          <div class="bg-accent-1/10 p-4 rounded-xl border border-accent-1/40">
+            <span class="font-bold text-accent-1 block mb-2">✅ KATEGORI PENGGUNAAN PRODUKTIF (AUDITABLE)</span>
+            <p class="text-[11px] text-text-secondary leading-relaxed">Alokasi difokuskan pada pengadaan bahan baku purwarupa, riset validasi target konsumen, biaya operasional distribusi logistik, kemasan produk riil, serta optimalisasi media promosi digital terarah. Evaluasi didasarkan pada akuntabilitas pelaporan keuangan dan indikator pembelajaran bisnis.</p>
+          </div>
+          <div class="bg-red-500/10 p-4 rounded-xl border border-red-500/40">
+            <span class="font-bold text-red-400 block mb-2">🚫 PEMBATASAN INSTRUMEN ALOKASI (NON-APPROVED)</span>
+            <p class="text-[11px] text-slate-400/70 leading-relaxed">Dana hibah stimulan tidak diizinkan dialokasikan ke dalam instrumen transaksi keuangan dengan volatilitas tinggi atau aset spekulatif non-riil yang memiliki eksposur risiko tinggi, seperti pasar berjangka ber-leverage, komoditas non-aset, atau instrumen berisiko sejenis lainnya.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">2. Mekanisme Pengawasan & Supervisi</h4>
+        <p>Tata kelola pelaksanaan mewajibkan perancangan buku panduan limitasi aset bagi dosen pembimbing lapangan, audit periodik kepatuhan penyaluran dana grant, serta pelibatan praktisi industri bersertifikasi untuk menjaga objektivitas penilaian portofolio usaha.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROGRAM 4: MICRO-AGENCY -->
+<div id="modal-agency" class="proposal-modal">
+  <div class="modal-box glass-panel w-[92vw] sm:w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative border border-glass-border">
+    <button class="absolute top-4 right-4 text-text-muted hover:text-accent-1 text-xl font-bold cursor-pointer" onclick="closeModal('modal-agency')">✕</button>
+    <div class="text-xs uppercase text-accent-1 font-bold mb-1">Usulan Rencana Detail — Program 04</div>
+    <h3 class="font-display text-3xl font-bold mb-4 text-text pr-6">Laboratorium Praktika Bisnis: AI-Driven Campus Micro-Agency</h3>
+    
+    <div class="space-y-6 text-sm text-text-secondary leading-relaxed">
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">1. Model Pendampingan UMKM Berbasis Talenta Mahasiswa</h4>
+        <p>Ekosistem bisnis di wilayah Surabaya menuntut adopsi digitalisasi, akuntansi berbasis digital, dan strategi periklanan yang efektif. Unit praktika ini didirikan sebagai laboratorium internal di bawah naungan Badan Pengembangan Usaha atau inkubator universitas. Unit ini berfungsi sebagai agensi penyedia solusi konsultasi digital bagi UMKM mitra. Profitabilitas unit operasional dikembalikan sebagai kompensasi beasiswa kerja mahasiswa atau retensi pemeliharaan fasilitas praktika.</p>
+      </div>
+
+      <!-- Visual Alur Karier Tingkatan Kontrol Kualitas -->
+      <div class="bg-bg-deep/50 p-4 rounded-xl border border-glass-border my-4">
+        <h5 class="text-xs font-bold text-accent-1 uppercase mb-3 tracking-wider">🛡️ Tingkatan Penugasan Mahasiswa & Sistem Penjaminan Mutu Konten:</h5>
+        <p class="text-xs mb-3 text-text-muted font-normal">Guna menjaga akuntabilitas hasil kerja laboratorium di mata pelaku bisnis luar, disusun pembagian peran berdasarkan kompetensi akademik:</p>
+        
+        <div class="space-y-2 text-xs font-normal">
+          <div class="bg-surface/60 p-3 rounded border-l-4 border-accent-1 flex items-center justify-between">
+            <span class="font-bold w-1/4 text-accent-2">Semester 1–2: Analis Junior</span>
+            <p class="w-3/4 text-[11px] text-text-secondary">Fokus pada pemetaan data dasar lapangan, dokumentasi profil produk mitra, serta entri draf pencatatan keuangan internal di bawah pengawasan instruktur.</p>
+          </div>
+          <div class="bg-surface/60 p-3 rounded border-l-4 border-accent-1 flex items-center justify-between">
+            <span class="font-bold w-1/4 text-accent-2">Semester 3–4: Spesialis Teknis</span>
+            <p class="w-3/4 text-[11px] text-text-secondary">Mengeksekusi penyusunan draf materi publikasi media, optimalisasi teks copywriting berbasis kecerdasan buatan, and visualisasi draf laporan performa.</p>
+          </div>
+          <div class="bg-surface/60 p-3 rounded border-l-4 border-accent-1 flex items-center justify-between bg-accent-1/5">
+            <span class="font-bold w-1/4 text-accent-1">Semester 5–6: Pengawas Mutu</span>
+            <p class="w-3/4 text-[11px] text-text-secondary">Bertindak sebagai pengendali mutu kualitas (Quality Controller). Memeriksa, mereview, dan menyetujui seluruh draf keluaran produk solusi sebelum diserahkan kepada klien institusi.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">2. Perikatan Kerja & Manajemen Risiko Hukum</h4>
+        <p>Setiap penugasan wajib dipayungi oleh <strong>Memorandum Kesepahaman Kerja Sama Praktika Akademis & Dokumen Standar Pelayanan (SLA)</strong> untuk menegaskan batasan hak, ruang lingkup pengerjaan solusi, serta klausul penyelesaian kesalahpahaman secara akademis. Aspek operasional memerlukan kajian legalitas struktur pajak unit usaha dan alokasi waktu pengawasan rutin oleh tim dosen pembina.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROGRAM 5: CORPORATE BONDED -->
+<div id="modal-bonded" class="proposal-modal">
+  <div class="modal-box glass-panel w-[92vw] sm:w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative border border-glass-border">
+    <button class="absolute top-4 right-4 text-text-muted hover:text-accent-1 text-xl font-bold cursor-pointer" onclick="closeModal('modal-bonded')">✕</button>
+    <div class="text-xs uppercase text-accent-1 font-bold mb-1">Usulan Rencana Detail — Program 05</div>
+    <h3 class="font-display text-3xl font-bold mb-4 text-text pr-6">Corporate-Bonded Scholarship: Integrasi Beasiswa Kemitraan Korporasi</h3>
+    
+    <div class="space-y-6 text-sm text-text-secondary leading-relaxed">
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">1. Optimasi Model Pembiayaan Pendidikan Pra-Kerja Berkelanjutan</h4>
+        <p>Tingginya beban pembiayaan awal perkuliahan menuntut hadirnya model alternatif inovatif bagi calon pendaftar potensial. Dibanding mengadopsi model *Income Share Agreements* (ISA) murni yang memiliki risiko tinggi pada validasi pendapatan dan infrastruktur hukum domestik, UKWMS dapat menerapkan model **Beasiswa Terikat Kemitraan Industri**. Pada model ini, pendanaan UKT dipenuhi langsung oleh korporasi mitra dengan imbal balik komitmen penyerapan karier setelah kelulusan.</p>
+      </div>
+
+      <!-- Visual Tabel Komparasi Matriks -->
+      <div class="my-4">
+        <h5 class="text-xs font-bold text-accent-1 uppercase mb-2">📊 Kajian Komparatif Model Pembiayaan Alternatif:</h5>
+        <table class="w-full text-left text-xs border-collapse font-normal text-text-secondary">
+          <thead>
+            <tr class="border-b border-glass-border">
+              <th class="py-2 text-text-muted font-bold">Variabel Analisis</th>
+              <th class="py-2 text-red-400 font-bold">Struktur ISA Murni (Global)</th>
+              <th class="py-2 text-accent-1 font-bold">Struktur Kemitraan Korporasi Terikat (Rekomendasi)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-glass-border/30">
+              <td class="py-3 font-semibold text-text">Dampak Arus Kas Kampus</td>
+              <td class="py-3 text-slate-300">Menuntut modal talangan internal (Eksposur risiko tinggi)</td>
+              <td class="py-3 text-accent-2">Nol Risiko (Pendanaan ditanggung penuh di awal oleh sektor industri).</td>
+            </tr>
+            <tr class="border-b border-glass-border/30">
+              <td class="py-3 font-semibold text-text">Kepatuhan Hukum Domestik</td>
+              <td class="py-3 text-slate-400 italic">Belum diakomodasi spesifik dalam regulasi nasional</td>
+              <td class="py-3 text-text-secondary">Sangat Aman (Menggunakan kerangka hukum Perjanjian Ikatan Dinas).</td>
+            </tr>
+            <tr>
+              <td class="py-3 font-semibold text-text">Proyeksi Penyerapan Lulusan</td>
+              <td class="py-3 text-slate-300">Pencarian karier bersifat mandiri pasca-studi</td>
+              <td class="py-3 text-text-secondary">Penempatan karier otomatis melalui program pemagangan terstruktur.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">2. Ketentuan Transisi Kontrak & Mekanisme Opsi Pengalihan</h4>
+        <p>Alur program dimulai dari sinkronisasi kebutuhan formasi sdm industri, rekrutmen bersama talenta potensial, pembiayaan studi berkala, hingga mekanisme pemotongan berbasis payroll saat lulusan mulai aktif bekerja di industri terkait. Kontrak dilandasi prinsip keadilan dengan menyertakan **Klausul Kompensasi Transisional Proporsional**. Jika mahasiswa memilih mengalihkan jalur karier (alasan keluarga/wirausaha), kompensasi pengembalian dana dihitung berdasar akumulasi riil biaya studi dikurangi durasi masa bakti yang telah berjalan.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROGRAM 6: WOMEN & YOUTH HUB -->
+<div id="modal-womenhub" class="proposal-modal">
+  <div class="modal-box glass-panel w-[92vw] sm:w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative border border-glass-border">
+    <button class="absolute top-4 right-4 text-text-muted hover:text-accent-1 text-xl font-bold cursor-pointer" onclick="closeModal('modal-womenhub')">✕</button>
+    <div class="text-xs uppercase text-accent-1 font-bold mb-1">Usulan Rencana Detail — Program 06</div>
+    <h3 class="font-display text-3xl font-bold mb-4 text-text pr-6">Pusat Studi & Inkubasi: Women & Youth Financial Inclusivity Hub</h3>
+    
+    <div class="space-y-6 text-sm text-text-secondary leading-relaxed">
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">1. Rekayasa Nilai Program Dampak Sosial Berkelanjutan</h4>
+        <p>Segmen Gen Z menaruh perhatian tinggi terhadap inisiatif yang berdampak sosial dan inklusif. Melalui pembentukan pusat inklusi finansial, UKWMS dapat menempatkan diri sebagai hub strategis peningkatan literasi keuangan domestik serta akselerasi usaha mikro perempuan berbasis teknologi. Integrasi program dirancang terpadu melalui skema Kuliah Kerja Nyata (KKN) Tematik, jalur riset pengabdian masyarakat, and penyelenggaraan simposium ilmiah tahunan.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 my-4 font-normal text-text-secondary">
+        <div class="bg-accent-1/5 p-4 rounded-xl border border-accent-1/20 text-xs">
+          <span class="font-bold text-accent-1 block mb-2">🏅 Kerangka Beasiswa Keberlanjutan Talenta Digital:</span>
+          <p class="leading-relaxed">Apresiasi pembiayaan dikemas dalam bentuk paket pemberdayaan komprehensif, mencakup keikutsertaan program coding intensif, akses bimbingan eksekutif bersama figur pemimpin perempuan nasional, serta prioritas pelibatan proyek riset terapan korporat. Seleksi mewajibkan pemaparan studi kasus tata kelola keuangan unit usaha keluarga.</p>
+        </div>
+        <div class="bg-bg-deep/50 p-4 rounded-xl border border-glass-border text-xs">
+          <span class="font-bold text-accent-2 block mb-2">💼 Struktur Pendanaan Kemitraan CSR (Zero Upfront Cost):</span>
+          <p class="leading-relaxed">Guna meminimalkan beban anggaran pemeliharaan operasional kampus, pendanaan program mengandalkan kerangka **Co-Branding Strategis Kemitraan CSR**. UKWMS memosisikan diri sebagai penyedia platform akademik, infrastruktur kurikulum, dan pengelola talenta mahasiswa, sedangkan instansi keuangan mitra bertindak selaku penyedia alokasi dana program tanggung jawab sosial korporasi.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">2. Perlindungan Kode Etik & Manajemen Kerahasiaan Data Finansial</h4>
+        <p>Guna menjamin keamanan informasi aset keuangan mikro yang diajukan oleh keluarga peserta, universitas memberlakukan kebijakan penandatanganan **Perjanjian Kerahasiaan Data Akademik (Non-Disclosure Agreement)** bersama pemilik usaha. Seluruh pengerjaan analisis laporan akademis wajib melalui metodologi anonimisasi total (masking data identitas dan angka keuangan aktual) guna menghindari risiko kebocoran data eksternal.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROGRAM 7: STUDENT AMBASSADOR -->
+<div id="modal-ambassador" class="proposal-modal">
+  <div class="modal-box glass-panel w-[92vw] sm:w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative border border-glass-border">
+    <button class="absolute top-4 right-4 text-text-muted hover:text-accent-1 text-xl font-bold cursor-pointer" onclick="closeModal('modal-ambassador')">✕</button>
+    <div class="text-xs uppercase text-accent-1 font-bold mb-1">Usulan Rencana Detail — Program 07</div>
+    <h3 class="font-display text-3xl font-bold mb-4 text-text pr-6">Standardisasi Program Pengembangan Kapasitas Kepemimpinan: Student Ambassador</h3>
+    
+    <div class="space-y-6 text-sm text-text-secondary leading-relaxed">
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">1. Latar Belakang Komunikasi Peer-to-Peer Organik</h4>
+        <p>Disseminasi informasi berbasis kedekatan teman sebaya (*peer-to-peer*) menunjukkan efisiensi konversi yang lebih unggul bagi karakteristik Gen Z jika disandingkan dengan model periklanan konvensional luar ruang. UKWMS memiliki aset berharga berupa ribuan mahasiswa aktif potensial untuk dioptimasi sebagai representasi citra positif kampus. Cakupan penugasan difokuskan pada program berbagi pengalaman karir di sekolah asal, fasilitator pendampingan peserta sandbox, serta representasi tim humas dalam open house universitas.</p>
+      </div>
+
+      <div class="bg-accent-1/5 p-4 rounded-xl border border-accent-1/20 my-4 text-xs font-normal text-text-secondary">
+        <h5 class="font-bold text-accent-1 mb-2 uppercase tracking-wider">🛡️ Nilai Integritas Institusi & Konversi Pengakuan Kinerja Akademis:</h5>
+        <p class="leading-relaxed mb-2">Selaras dengan tradisi keluhuran akademik UKWMS, tata laksana program **menolak adopsi skema insentif transaksional komersial murni, hitungan remunerasi per kepala, atau model pemasaran bertingkat**. Seluruh capaian kontribusi mahasiswa dihargai secara profesional menggunakan konversi bobot penilaian non-moneter:</p>
+        <div class="grid grid-cols-2 gap-3 text-[11px] text-text-secondary mt-2">
+          <div class="bg-surface/70 p-2 rounded">• Akumulasi Poin Satuan Kredit Kegiatan Mahasiswa (SKKM) sebagai salah satu prasyarat kelulusan studi.</div>
+          <div class="bg-surface/70 p-2 rounded">• Alokasi penghargaan biaya pendidikan yang diformulasikan ke dalam "Beasiswa Kepemimpinan & Pengabdian".</div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">2. Kontrol Standardisasi Informasi & Manajemen Reputasi</h4>
+        <p>Sebelum ditugaskan secara resmi ke institusi sasaran, setiap mahasiswa wajib menuntaskan program **Pelatihan Kepemimpinan & Etika Komunikasi Korporat** guna menyamakan pemahaman profil keunggulan program studi, serta meraih sertifikasi kelayakan duta internal. Tata kelola risiko menuntut harmonisasi rubrik poin SKKM antar fakultas dan akurasi supervisi oleh Biro Kemahasiswaan.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROGRAM 8: GREEN LEDGER CAMPUS -->
+<div id="modal-greenledger" class="proposal-modal">
+  <div class="modal-box glass-panel w-[92vw] sm:w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative border border-glass-border">
+    <button class="absolute top-4 right-4 text-text-muted hover:text-accent-1 text-xl font-bold cursor-pointer" onclick="closeModal('modal-greenledger')">✕</button>
+    <div class="text-xs uppercase text-accent-1 font-bold mb-1">Usulan Rencana Detail — Program 08</div>
+    <h3 class="font-display text-3xl font-bold mb-4 text-text pr-6">Green Ledger Campus: Tata Kelola Transparansi Rekam Jejak Lingkungan Berbasis Data</h3>
+    
+    <div class="space-y-6 text-sm text-text-secondary leading-relaxed">
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">1. Positioning Strategis Instumen Penguat Citra Kampus</h4>
+        <p>Isu pelestarian lingkungan dan keberlanjutan iklim memiliki tingkat resonansi emosional yang tinggi di kalangan generasi muda. Namun, berdasarkan riset preferensi admisi, variabel utama penentu pilihan studi pendaftar tetap bertumpu pada aspek keterjangkauan biaya, prospek serapan kerja, dan pengakuan brand institusi. Oleh karena itu, program Green Ledger diposisikan sebagai **instrumen pendukung taktis (supporting program)** untuk memperkuat nilai humas, orisinalitas cerita kampanye, dan penguat reputasi humanis kampus.</p>
+      </div>
+
+      <!-- Visual Dashboard Live Metrics Mockup -->
+      <div class="bg-bg-deep/50 p-5 rounded-2xl border border-glass-border my-4 text-center font-normal">
+        <h5 class="text-xs font-bold text-accent-1 uppercase mb-3 tracking-wider">🟢 Ilustrasi Metrik Dashboard Transparansi Capaian Hijau Publik:</h5>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="bg-surface/80 p-4 rounded-xl shadow-xs">
+            <span class="text-2xl font-black text-accent-1 block">1,240</span>
+            <span class="text-[9px] uppercase font-bold text-text-muted">Vegetasi Terverifikasi Sistem</span>
+          </div>
+          <div class="bg-surface/80 p-4 rounded-xl border border-accent-1/20 shadow-xs">
+            <span class="text-2xl font-black text-accent-1 block">12.4 T</span>
+            <span class="text-[9px] uppercase font-bold text-text-muted">Reduksi Jejak Karbon Komunitas</span>
+          </div>
+          <div class="bg-surface/80 p-4 rounded-xl shadow-xs">
+            <span class="text-2xl font-black text-accent-1 block">+18%</span>
+            <span class="text-[9px] uppercase font-bold text-text-muted">Optimalisasi Efisiensi Energi</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-accent-2 font-bold mb-1">2. Mekanisme Akuntabilitas Data & Dampak Efisiensi Anggaran Kampus</h4>
+        <p>Tiap indeks pertumbuhan mahasiswa dikorelasikan secara berkala dengan kontribusi aksi lingkungan yang terekam transparan pada sistem data instrumen digital. Sebagai langkah pencegahan atas kekhawatiran kampanye kosmetik (*greenwashing*), proyek ini ditargetkan langsung untuk mendukung **program reduksi biaya operasional utilitas internal universitas** (pengurangan pemakaian kertas secara masif, penghematan daya listrik, dan optimasi air). Inovasi teknologi mahasiswa yang terbukti memberikan dampak efisiensi kos operasional berhak mendapatkan pengakuan sertifikasi dokumen pendamping ijazah (SKPI) and apresiasi beasiswa khusus.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =======================================================
+     SISTEM KONTROL NAVIGASI DECK UTAMA (DINAMIS 15 SLIDE)
+     ======================================================= -->
+<div class="nav-controls">
+  <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+  <span class="slide-counter" id="counter">1 / 15</span>
+</div>
+
+<script>
+  let current = 1;
+  const total = document.querySelectorAll('.slide').length; 
+  const dotsContainer = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  
+  for (let i = 1; i <= total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 1 ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dotsContainer.appendChild(dot);
+  }
+
+  function goToSlide(n) {
+    if (document.querySelector('.proposal-modal.open')) return;
+
+    const prev = document.querySelector('.slide.active');
+    const next = document.querySelector(`.slide[data-slide="${n}"]`);
+    if (prev) prev.classList.remove('active');
+    if (next) { 
+      next.classList.add('active'); 
+      animateSlide(next); 
+      const contentEl = next.querySelector('.content');
+      if (contentEl) contentEl.scrollTop = 0;
+    }
+    current = n; 
+    updateNav();
+  }
+
+  function changeSlide(dir) {
+    if (document.querySelector('.proposal-modal.open')) return;
+    let next = current + dir;
+    if (next < 1) next = total;
+    if (next > total) next = 1;
+    goToSlide(next);
+  }
+
+  function updateNav() {
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i + 1 === current);
+    });
+    counter.textContent = current + ' / ' + total;
+  }
+
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.classList.add('open');
+      modal.scrollTop = 0;
+    }
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.classList.remove('open');
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.proposal-modal.open').forEach(m => m.classList.remove('open'));
+      return;
+    }
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    if (document.querySelector('.proposal-modal.open')) return;
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+  });
+
+  function animateSlide(slide) {
+    slide.querySelectorAll('.reveal').forEach((el, i) => {
+      el.style.transition = 'none';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(18px)';
+      el.offsetHeight; 
+      const delay = i * 0.08;
+      el.style.transition = `opacity 0.4s ease ${delay}s, transform 0.4s ease ${delay}s`;
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    });
+  }
+
+  const spotlight = document.querySelector('.mouse-spotlight');
+  document.addEventListener('mousemove', (e) => {
+    const rgb = getComputedStyle(document.documentElement).getPropertyValue('--glow-color-rgb').trim() || '139,195,74';
+    spotlight.style.background = `radial-gradient(420px circle at ${e.clientX}px ${e.clientY}px, rgba(${rgb},0.16), transparent 60%)`;
+  });
+
+  animateSlide(document.querySelector('.slide.active'));
+</script>
+</body>
+</html>
