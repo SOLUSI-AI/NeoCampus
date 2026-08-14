@@ -725,14 +725,18 @@
         <div class="grid grid-cols-2 gap-3 pt-3">
           <div>
             <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-pendaftarSebelum">Pendaftar/th (lalu)</label>
-            <input id="f-pendaftarSebelum" type="text" inputmode="numeric" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="1000" />
+            <input id="f-pendaftarSebelum" type="text" inputmode="numeric" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="1000" oninput="updatePreview()" />
           </div>
           <div>
             <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-pendaftarTerakhir">Pendaftar/th (kini)</label>
-            <input id="f-pendaftarTerakhir" type="text" inputmode="numeric" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="700" />
+            <input id="f-pendaftarTerakhir" type="text" inputmode="numeric" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="700" oninput="updatePreview()" />
           </div>
         </div>
       </details>
+      <div>
+        <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="link-output">Link kustom — otomatis mengikuti isian di atas</label>
+        <input id="link-output" type="text" readonly class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-3 py-2 text-[11px] text-accent-2 focus:outline-none focus:border-accent-1 select-all" />
+      </div>
       <p class="text-[11px] text-text-muted leading-relaxed">Perubahan tersimpan otomatis di browser ini. Gunakan <b>Salin Link Kustom</b> untuk mengirim deck dengan nama kampus ini ke prospek.</p>
       <div class="flex flex-wrap gap-2 pt-1">
         <button type="submit" class="bg-accent-1 text-bg font-bold text-xs uppercase tracking-wider rounded-lg px-4 py-2.5 cursor-pointer hover:brightness-110">Simpan &amp; Terapkan</button>
@@ -832,10 +836,28 @@
   }
 
   // ---- Menu Pengaturan Kampus (tombol ⚙) ----
+  function fieldValue(id, fallback) {
+    return document.getElementById(id).value.trim() || fallback;
+  }
+
+  // Link dibangun langsung dari isian form (bukan dari variabel tersimpan),
+  // jadi hasilnya selalu mengikuti apa yang terketik — tanpa perlu simpan dulu.
+  function buildCustomLink() {
+    const p = new URLSearchParams();
+    p.set('campus', fieldValue('f-campus', BRAND_DEFAULT.short));
+    p.set('campusFull', fieldValue('f-campusFull', BRAND_DEFAULT.full));
+    p.set('penurunan', fieldValue('f-penurunan', BRAND_DEFAULT.penurunan).replace('%', ''));
+    p.set('pendaftarSebelum', fieldValue('f-pendaftarSebelum', BRAND_DEFAULT.pendaftarSebelum));
+    p.set('pendaftarTerakhir', fieldValue('f-pendaftarTerakhir', BRAND_DEFAULT.pendaftarTerakhir));
+    return location.origin + location.pathname + '?' + p.toString();
+  }
+
   function updatePreview() {
-    const s = document.getElementById('f-campus').value.trim() || BRAND_DEFAULT.short;
-    const p = document.getElementById('f-penurunan').value.trim().replace('%', '') || BRAND_DEFAULT.penurunan.replace('%', '');
+    const s = fieldValue('f-campus', BRAND_DEFAULT.short);
+    const p = fieldValue('f-penurunan', BRAND_DEFAULT.penurunan).replace('%', '');
     document.getElementById('preview-line').textContent = 'Menuju Ekosistem Futuristik ' + s + ' · penurunan ' + p + '%';
+    const linkEl = document.getElementById('link-output');
+    if (linkEl) linkEl.value = buildCustomLink();
   }
 
   function openSettings() {
@@ -868,11 +890,11 @@
   }
 
   function copyBrandLink() {
-    const p = new URLSearchParams();
-    Object.keys(PARAM_MAP).forEach((param) => p.set(param, BRAND[PARAM_MAP[param]]));
-    const url = location.origin + location.pathname + '?' + p.toString();
+    const url = buildCustomLink();
+    const linkEl = document.getElementById('link-output');
+    if (linkEl) { linkEl.focus(); linkEl.select(); }
     const done = () => alert('Link kustom disalin:\n' + url);
-    const fallback = () => prompt('Salin link ini:', url);
+    const fallback = () => prompt('Salin link ini (Ctrl+C):', url);
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(url).then(done).catch(fallback);
     } else {
