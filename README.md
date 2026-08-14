@@ -1,11 +1,14 @@
-# AI4CampusDeck — UKWMS Enrollment Strategy
+# AI4CampusDeck — Strategi Percepatan Enrollment Kampus
 
-A business proposal presentation deck untuk mempercepat enrollment perguruan tinggi
-(pertama kali dibuat untuk **Universitas Kristen Widya Mandala Surabaya / UKWMS**),
-menampilkan strategi transformasi kampus menjadi ekosistem futuristik berbasis AI & FinTech.
+Presentation deck untuk mempercepat enrollment perguruan tinggi (fokus: **PTS**
+yang terdampak penurunan pendaftar), menampilkan strategi transformasi kampus
+menjadi ekosistem futuristik berbasis AI & FinTech.
 
-> Nama kampus di deck **generik & bisa diganti** — cocok dipakai ulang untuk kampus
-> mana pun. Lihat [Kustomisasi Nama Kampus](#kustomisasi-nama-kampus).
+Deck ini **generik & reusable** — nama kampus, % penurunan, dan angka pendaftar
+bisa diubah sesuai prospek tanpa menyentuh kode (via menu ⚙ di deck atau URL).
+Awalnya dibuat untuk **Universitas Kristen Widya Mandala Surabaya (UKWMS)**.
+
+Lihat [Kustomisasi Nama Kampus](#kustomisasi-nama-kampus).
 
 ## Demo / Live
 
@@ -19,8 +22,17 @@ https://solusi-ai.github.io/NeoCampus/
 > (`solusi-ai.github.io`), bukan domain username.
 >
 > Default menampilkan `Kampus Nusantara` (generik). Tim marketing bisa mengubah
-> prospek via menu ⚙ di deck atau URL — lihat
+> nama kampus sesuai prospek via menu ⚙ di deck atau URL — lihat
 > [Kustomisasi Nama Kampus](#kustomisasi-nama-kampus).
+
+## Fitur
+
+- **15 slide interaktif** — navigasi tombol, keyboard (←/→/spasi), swipe, dan dot
+- **8 program lengkap** dengan modal *deep-dive* per program
+- **Menu ⚙ “Pengaturan Kampus”** — isi nama kampus & angka kunci, tersimpan di
+  browser, plus **Salin Link Kustom** siap kirim ke prospek
+- **Override via URL** — `?campus=...` tanpa edit file
+- **Zero build** — HTML statis, langsung jalan di GitHub Pages
 
 ## Kustomisasi Nama Kampus
 
@@ -91,7 +103,7 @@ Ubah nilainya, commit & push — GitHub Pages otomatis rebuild.
 | File | Keterangan |
 |------|------------|
 | `index.html` | Deck utama dengan navigasi slide (landing page) |
-| `260604_UKWMS_EnrollmentDeck_v01.slides.html` | Versi slides v01 |
+| `260604_UKWMS_EnrollmentDeck_v01.slides.html` | Arsip versi v01 (masih ber-brand UKWMS, tidak di-link dari deck utama) |
 
 ## Cara Deploy ke GitHub Pages
 
@@ -103,7 +115,7 @@ Prasyarat: sudah login `gh auth login` dan punya akses admin ke repo.
 # 1. Push repo (jika repo baru)
 git init
 git add .
-git commit -m "feat: UKWMS enrollment strategy deck"
+git commit -m "feat: enrollment strategy deck"
 git branch -M main
 git remote add origin https://github.com/SOLUSI-AI/NeoCampus.git
 git push -u origin main
@@ -124,12 +136,12 @@ gh api repos/SOLUSI-AI/NeoCampus/pages --jq .status
 
 ### Opsi B — Manual (UI GitHub)
 
-1. **Buat repo baru di GitHub** (contoh: `ukwms-enrollment-deck`), jangan centang "Initialize with README".
+1. **Buat repo baru di GitHub** (contoh: `enrollment-deck`), jangan centang "Initialize with README".
 2. Push file dari folder ini:
    ```bash
    git init
    git add .
-   git commit -m "feat: UKWMS enrollment strategy deck"
+   git commit -m "feat: enrollment strategy deck"
    git branch -M main
    git remote add origin https://github.com/<username>/<nama-repo>.git
    git push -u origin main
