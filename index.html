@@ -39,6 +39,8 @@
     .nav-controls{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;z-index:100;background:rgba(15,23,42,0.9);backdrop-filter:blur(14px);padding:10px 22px;border-radius:999px;border:1px solid rgba(148,163,184,0.55);box-shadow:0 18px 45px rgba(15,23,42,0.95); width: max-content; max-width: 95vw;}
     .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:rgba(30,64,175,0.35);color:#e5fbea;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .25s,transform .25s,box-shadow .25s; flex-shrink: 0;}
     .nav-btn:hover{background:rgba(56,189,248,0.9);transform:translateY(-1px);box-shadow:0 0 18px rgba(56,189,248,0.85);}  
+    .nav-btn.settings-btn{background:rgba(139,195,74,0.16);border:1px solid rgba(139,195,74,0.45);color:#d9f99d;}  
+    .nav-btn.settings-btn:hover{background:rgba(139,195,74,0.9);color:#0f172a;}  
     .slide-dots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
     .slide-dots .dot{width:9px;height:9px;border-radius:999px;background:rgba(148,163,184,0.45);cursor:pointer;transition:background .3s,transform .3s;}
     .slide-dots .dot.active{background:#8BC34A;transform:scale(1.35);}  
@@ -704,28 +706,33 @@
     <div class="text-xs uppercase text-accent-1 font-bold mb-1">Pengaturan Kampus</div>
     <h3 class="font-display text-2xl font-bold mb-4 text-text pr-6">Sesuaikan untuk Prospek</h3>
     <form class="space-y-3 text-sm" onsubmit="event.preventDefault(); saveSettings();">
+      <p class="text-[11px] text-text-muted leading-relaxed -mt-1">Cukup isi <b>nama kampus</b> &amp; <b>% penurunan</b> — angka pendaftar otomatis memakai default bila dikosongkan.</p>
       <div>
         <label class="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1" for="f-campus">Nama kampus (singkat)</label>
-        <input id="f-campus" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-3 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="cth: UKWMS" />
+        <input id="f-campus" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-3 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="cth: UNAIR" oninput="updatePreview()" />
       </div>
       <div>
         <label class="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1" for="f-campusFull">Nama kampus (lengkap)</label>
-        <input id="f-campusFull" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-3 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="cth: Universitas Kristen Widya Mandala Surabaya" />
+        <input id="f-campusFull" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-3 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="cth: Universitas Airlangga" oninput="updatePreview()" />
       </div>
-      <div class="grid grid-cols-3 gap-3">
-        <div>
-          <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-penurunan">Penurunan</label>
-          <input id="f-penurunan" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="30%" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-pendaftarSebelum">Pendaftar/th (lalu)</label>
-          <input id="f-pendaftarSebelum" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="1000" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-pendaftarTerakhir">Pendaftar/th (kini)</label>
-          <input id="f-pendaftarTerakhir" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="700" />
-        </div>
+      <div>
+        <label class="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1" for="f-penurunan">Penurunan pendaftar (%)</label>
+        <input id="f-penurunan" type="text" inputmode="numeric" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-3 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="cth: 25" oninput="updatePreview()" />
       </div>
+      <p class="text-xs text-accent-2 rounded-lg bg-bg-deep/60 border border-glass-border px-3 py-2.5" id="preview-line">Menuju Ekosistem Futuristik UKWMS · penurunan 30%</p>
+      <details class="rounded-lg border border-glass-border px-3 py-2">
+        <summary class="cursor-pointer text-[11px] font-bold text-text-muted uppercase tracking-wider select-none">Angka pendaftar — opsional</summary>
+        <div class="grid grid-cols-2 gap-3 pt-3">
+          <div>
+            <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-pendaftarSebelum">Pendaftar/th (lalu)</label>
+            <input id="f-pendaftarSebelum" type="text" inputmode="numeric" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="1000" />
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-pendaftarTerakhir">Pendaftar/th (kini)</label>
+            <input id="f-pendaftarTerakhir" type="text" inputmode="numeric" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="700" />
+          </div>
+        </div>
+      </details>
       <p class="text-[11px] text-text-muted leading-relaxed">Perubahan tersimpan otomatis di browser ini. Gunakan <b>Salin Link Kustom</b> untuk mengirim deck dengan nama kampus ini ke prospek.</p>
       <div class="flex flex-wrap gap-2 pt-1">
         <button type="submit" class="bg-accent-1 text-bg font-bold text-xs uppercase tracking-wider rounded-lg px-4 py-2.5 cursor-pointer hover:brightness-110">Simpan &amp; Terapkan</button>
@@ -745,7 +752,7 @@
   <div class="slide-dots" id="dots"></div>
   <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
   <span class="slide-counter" id="counter">1 / 15</span>
-  <button class="nav-btn" onclick="openSettings()" title="Ubah nama kampus & angka untuk prospek">⚙</button>
+  <button class="nav-btn settings-btn" onclick="openSettings()" title="Ubah nama kampus & angka untuk prospek">⚙</button>
 </div>
 
 <script>
@@ -818,24 +825,34 @@
     try { saved = JSON.parse(localStorage.getItem('neocampus_brand') || '{}'); } catch (e) { saved = {}; }
     Object.keys(PARAM_MAP).forEach((p) => {
       const key = PARAM_MAP[p];
-      BRAND[key] = params.get(p) || saved[key] || BRAND_DEFAULT[key];
+      let v = params.get(p) || saved[key] || BRAND_DEFAULT[key];
+      if (key === 'penurunan' && v) v = String(v).replace('%', '') + '%';
+      BRAND[key] = v;
     });
   }
 
   // ---- Menu Pengaturan Kampus (tombol ⚙) ----
+  function updatePreview() {
+    const s = document.getElementById('f-campus').value.trim() || BRAND_DEFAULT.short;
+    const p = document.getElementById('f-penurunan').value.trim().replace('%', '') || BRAND_DEFAULT.penurunan.replace('%', '');
+    document.getElementById('preview-line').textContent = 'Menuju Ekosistem Futuristik ' + s + ' · penurunan ' + p + '%';
+  }
+
   function openSettings() {
     document.getElementById('f-campus').value = BRAND.short;
     document.getElementById('f-campusFull').value = BRAND.full;
-    document.getElementById('f-penurunan').value = BRAND.penurunan;
+    document.getElementById('f-penurunan').value = BRAND.penurunan.replace('%', '');
     document.getElementById('f-pendaftarSebelum').value = BRAND.pendaftarSebelum;
     document.getElementById('f-pendaftarTerakhir').value = BRAND.pendaftarTerakhir;
+    updatePreview();
     document.getElementById('modal-settings').classList.add('open');
   }
 
   function saveSettings() {
     BRAND.short = document.getElementById('f-campus').value.trim() || BRAND_DEFAULT.short;
     BRAND.full = document.getElementById('f-campusFull').value.trim() || BRAND_DEFAULT.full;
-    BRAND.penurunan = document.getElementById('f-penurunan').value.trim() || BRAND_DEFAULT.penurunan;
+    const pVal = document.getElementById('f-penurunan').value.trim().replace('%', '');
+    BRAND.penurunan = pVal ? pVal + '%' : BRAND_DEFAULT.penurunan;
     BRAND.pendaftarSebelum = document.getElementById('f-pendaftarSebelum').value.trim() || BRAND_DEFAULT.pendaftarSebelum;
     BRAND.pendaftarTerakhir = document.getElementById('f-pendaftarTerakhir').value.trim() || BRAND_DEFAULT.pendaftarTerakhir;
     applyBranding();
