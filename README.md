@@ -1,18 +1,53 @@
 # AI4CampusDeck — UKWMS Enrollment Strategy
 
-A business proposal presentation deck for **Universitas Kristen Widya Mandala Surabaya (UKWMS)**,
-showcasing a comprehensive strategy to accelerate new student enrollment by transforming the campus into a futuristic ecosystem driven by AI & FinTech.
+A business proposal presentation deck untuk mempercepat enrollment perguruan tinggi
+(pertama kali dibuat untuk **Universitas Kristen Widya Mandala Surabaya / UKWMS**),
+menampilkan strategi transformasi kampus menjadi ekosistem futuristik berbasis AI & FinTech.
 
-> Deck ini versi **standalone** — diekstrak dari riwayat git portfolio pribadi
-> (branch `ukwms-legacy`), disiapkan untuk repo GitHub Pages sendiri.
+> Nama kampus di deck **generik & bisa diganti** — cocok dipakai ulang untuk kampus
+> mana pun. Lihat [Kustomisasi Nama Kampus](#kustomisasi-nama-kampus).
 
 ## Demo / Live
 
-Setelah di-push ke GitHub dan Pages diaktifkan, deck bisa diakses di:
+Deck sudah live di GitHub Pages:
 
 ```
-https://<username>.github.io/<nama-repo>/
+https://solusi-ai.github.io/NeoCampus/
 ```
+
+> Repo berada di bawah organisasi **SOLUSI-AI**, jadi URL memakai domain org
+> (`solusi-ai.github.io`), bukan domain username.
+>
+> Default menampilkan nama generik (`NAMA KAMPUS`). Ganti via URL atau config —
+> lihat [Kustomisasi Nama Kampus](#kustomisasi-nama-kampus).
+
+## Kustomisasi Nama Kampus
+
+Nama kampus **tidak di-hardcode**. Di dalam HTML memakai token `{{KAMPUS}}`
+(nama singkat) dan `{{KAMPUS_FULL}}` (nama lengkap), yang diganti otomatis oleh
+blok `KONFIGURASI KAMPUS` di bagian `<script>`.
+
+### Cara 1 — Via URL (tanpa edit file)
+
+```text
+https://solusi-ai.github.io/NeoCampus/?campus=UNAIR&campusFull=Universitas%20Airlangga
+```
+
+- `campus` → nama singkat (default: `NAMA KAMPUS`)
+- `campusFull` → nama lengkap (default: `Nama Universitas Anda`)
+
+### Cara 2 — Edit konfigurasi di `index.html`
+
+Cari blok `KONFIGURASI KAMPUS` di bagian `<script>`:
+
+```js
+const BRAND = {
+  short: 'NAMA KAMPUS',
+  full: 'Nama Universitas Anda',
+};
+```
+
+Ubah kedua nilai, commit & push — GitHub Pages otomatis rebuild.
 
 ## Three Pillars
 
@@ -41,6 +76,35 @@ https://<username>.github.io/<nama-repo>/
 | `260604_UKWMS_EnrollmentDeck_v01.slides.html` | Versi slides v01 |
 
 ## Cara Deploy ke GitHub Pages
+
+### Opsi A — Cepat (gh CLI)
+
+Prasyarat: sudah login `gh auth login` dan punya akses admin ke repo.
+
+```bash
+# 1. Push repo (jika repo baru)
+git init
+git add .
+git commit -m "feat: UKWMS enrollment strategy deck"
+git branch -M main
+git remote add origin https://github.com/SOLUSI-AI/NeoCampus.git
+git push -u origin main
+
+# 2. Aktifkan GitHub Pages dari branch main / root
+gh api -X POST "repos/SOLUSI-AI/NeoCampus/pages" \
+  -f "source[branch]=main" -f "source[path]=/"
+
+# 3. Cek status build (built = siap)
+gh api repos/SOLUSI-AI/NeoCampus/pages --jq .status
+
+# 4. Deck live di:
+#    https://solusi-ai.github.io/NeoCampus/
+```
+
+> Ganti `SOLUSI-AI/NeoCampus` dengan `owner/repo` milikmu. Jika repo ada di
+> akun pribadi, URL live jadi `https://<username>.github.io/<nama-repo>/`.
+
+### Opsi B — Manual (UI GitHub)
 
 1. **Buat repo baru di GitHub** (contoh: `ukwms-enrollment-deck`), jangan centang "Initialize with README".
 2. Push file dari folder ini:
