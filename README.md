@@ -18,14 +18,14 @@ https://solusi-ai.github.io/NeoCampus/
 > Repo berada di bawah organisasi **SOLUSI-AI**, jadi URL memakai domain org
 > (`solusi-ai.github.io`), bukan domain username.
 >
-> Default menampilkan `UKWMS`. Tim marketing bisa mengubah nama kampus sesuai
+> Default menampilkan `Kampus Nusantara` (generik). Tim marketing bisa mengubah
 > prospek via menu ⚙ di deck atau URL — lihat
 > [Kustomisasi Nama Kampus](#kustomisasi-nama-kampus).
 
 ## Kustomisasi Nama Kampus
 
 Nama kampus & angka kunci deck **tidak di-hardcode** — bisa diubah sesuai
-prospek oleh tim marketing. Default: `UKWMS`.
+prospek oleh tim marketing. Default: `Kampus Nusantara` (generik).
 
 ### Cara 1 — Menu ⚙ di dalam deck (paling mudah, untuk tim marketing)
 
@@ -37,7 +37,7 @@ Klik tombol **⚙** di navigasi bawah, lalu isi:
 
 Klik **Simpan & Terapkan** — tersimpan otomatis di browser (localStorage).
 Tombol **Salin Link Kustom** membuat URL dengan nama kampus terisi, siap
-langsung dikirim ke prospek. **Reset** mengembalikan ke default UKWMS.
+langsung dikirim ke prospek. **Reset** mengembalikan ke default Kampus Nusantara.
 
 ### Cara 2 — Via URL (tanpa edit file)
 
@@ -45,7 +45,7 @@ langsung dikirim ke prospek. **Reset** mengembalikan ke default UKWMS.
 https://solusi-ai.github.io/NeoCampus/?campus=UKSW&campusFull=Universitas%20Kristen%20Satya%20Wacana&penurunan=25%25&pendaftarSebelum=1200&pendaftarTerakhir=900
 ```
 
-- `campus` → nama singkat (default: `UKWMS`)
+- `campus` → nama singkat (default: `Kampus Nusantara`)
 - `campusFull` → nama lengkap
 - `penurunan` → persen penurunan (default: `30%`)
 - `pendaftarSebelum` → rata-rata pendaftar/th sebelumnya (default: `1000`)
@@ -57,8 +57,8 @@ Cari blok `BRAND_DEFAULT` di bagian `<script>`:
 
 ```js
 const BRAND_DEFAULT = {
-  short: 'UKWMS',
-  full: 'Universitas Kristen Widya Mandala Surabaya',
+  short: 'Kampus Nusantara',
+  full: 'Kampus Nusantara',
   penurunan: '30%',
   pendaftarSebelum: '1000',
   pendaftarTerakhir: '700',
