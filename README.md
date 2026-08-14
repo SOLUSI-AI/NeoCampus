@@ -42,7 +42,7 @@ langsung dikirim ke prospek. **Reset** mengembalikan ke default UKWMS.
 ### Cara 2 — Via URL (tanpa edit file)
 
 ```text
-https://solusi-ai.github.io/NeoCampus/?campus=UNAIR&campusFull=Universitas%20Airlangga&penurunan=25%25&pendaftarSebelum=1200&pendaftarTerakhir=900
+https://solusi-ai.github.io/NeoCampus/?campus=UKSW&campusFull=Universitas%20Kristen%20Satya%20Wacana&penurunan=25%25&pendaftarSebelum=1200&pendaftarTerakhir=900
 ```
 
 - `campus` → nama singkat (default: `UKWMS`)
