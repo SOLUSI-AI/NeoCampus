@@ -114,7 +114,7 @@
         Akselerasi Generasi Inovator Berbasis AI & FinTech
       </h1>
       <p class="max-w-3xl text-[clamp(0.95rem,1.4vw,1.15rem)] text-text-secondary leading-relaxed text-balance reveal">
-        Menjawab penurunan ~30% pendaftar dalam dua tahun terakhir dengan mengubah {{KAMPUS}} dari sekadar “tempat kuliah”
+        Menjawab penurunan ~{{PENURUNAN}} pendaftar dalam dua tahun terakhir dengan mengubah {{KAMPUS}} dari sekadar “tempat kuliah”
         menjadi ekosistem yang langsung menciptakan nilai ekonomi dan jalur karier nyata bagi mahasiswa.
       </p>
     </div>
@@ -128,10 +128,10 @@
     <div class="content">
       <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Konteks & Masalah</p>
       <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">Kenapa Enrollment Turun? Masalahnya Bukan Sekadar Promosi</h2>
-      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">{{KAMPUS}} mengalami penurunan pendaftar sekitar 30% dalam dua tahun terakhir—sejalan dengan tekanan yang juga dialami banyak perguruan tinggi swasta—di tengah naiknya jalur mandiri PTN dan alternatif pendidikan digital.</p>
+      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">{{KAMPUS}} mengalami penurunan pendaftar sekitar {{PENURUNAN}} dalam dua tahun terakhir—sejalan dengan tekanan yang juga dialami banyak perguruan tinggi swasta—di tengah naiknya jalur mandiri PTN dan alternatif pendidikan digital.</p>
       <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
         <li><span class="font-semibold">Tren nasional:</span> banyak PTS mengalami penurunan peminat, sementara jalur mandiri PTN dan bootcamp digital makin agresif menawarkan jalan pintas ke dunia kerja.</li>
-        <li><span class="font-semibold">Realitas {{KAMPUS}}:</span> dari rata-rata ±1000 pendaftar per tahun, dua tahun terakhir turun ke kisaran ±700 pendaftar per tahun ajaran.</li>
+        <li><span class="font-semibold">Realitas {{KAMPUS}}:</span> dari rata-rata ±{{PENDAFTAR_SEBELUM}} pendaftar per tahun, dua tahun terakhir turun ke kisaran ±{{PENDAFTAR_TERAKHIR}} pendaftar per tahun ajaran.</li>
         <li><span class="font-semibold">Persepsi pasar:</span> orang tua dan siswa mulai mempertanyakan <em>return on investment</em> kuliah jika outcome karier dan nilai tambah ekonominya tidak terlihat jelas.</li>
       </ul>
     </div>
@@ -697,6 +697,46 @@
 </div>
 
 
+<!-- MODAL PENGATURAN KAMPUS (menu ⚙ — untuk tim marketing) -->
+<div id="modal-settings" class="proposal-modal">
+  <div class="modal-box glass-panel w-[92vw] sm:w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative border border-glass-border">
+    <button class="absolute top-4 right-4 text-text-muted hover:text-accent-1 text-xl font-bold cursor-pointer" onclick="closeModal('modal-settings')">✕</button>
+    <div class="text-xs uppercase text-accent-1 font-bold mb-1">Pengaturan Kampus</div>
+    <h3 class="font-display text-2xl font-bold mb-4 text-text pr-6">Sesuaikan untuk Prospek</h3>
+    <form class="space-y-3 text-sm" onsubmit="event.preventDefault(); saveSettings();">
+      <div>
+        <label class="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1" for="f-campus">Nama kampus (singkat)</label>
+        <input id="f-campus" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-3 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="cth: UKWMS" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1" for="f-campusFull">Nama kampus (lengkap)</label>
+        <input id="f-campusFull" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-3 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="cth: Universitas Kristen Widya Mandala Surabaya" />
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-penurunan">Penurunan</label>
+          <input id="f-penurunan" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="30%" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-pendaftarSebelum">Pendaftar/th (lalu)</label>
+          <input id="f-pendaftarSebelum" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="1000" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1" for="f-pendaftarTerakhir">Pendaftar/th (kini)</label>
+          <input id="f-pendaftarTerakhir" type="text" class="w-full bg-bg-deep/60 border border-glass-border rounded-lg px-2 py-2 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent-1" placeholder="700" />
+        </div>
+      </div>
+      <p class="text-[11px] text-text-muted leading-relaxed">Perubahan tersimpan otomatis di browser ini. Gunakan <b>Salin Link Kustom</b> untuk mengirim deck dengan nama kampus ini ke prospek.</p>
+      <div class="flex flex-wrap gap-2 pt-1">
+        <button type="submit" class="bg-accent-1 text-bg font-bold text-xs uppercase tracking-wider rounded-lg px-4 py-2.5 cursor-pointer hover:brightness-110">Simpan &amp; Terapkan</button>
+        <button type="button" onclick="copyBrandLink()" class="border border-glass-border text-text-secondary text-xs font-bold uppercase tracking-wider rounded-lg px-4 py-2.5 cursor-pointer hover:border-accent-1">Salin Link Kustom</button>
+        <button type="button" onclick="resetBrand()" class="border border-glass-border text-text-muted text-xs font-bold uppercase tracking-wider rounded-lg px-4 py-2.5 cursor-pointer hover:border-accent-1">Reset</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
 <!-- =======================================================
      SISTEM KONTROL NAVIGASI DECK UTAMA (DINAMIS 15 SLIDE)
      ======================================================= -->
@@ -705,28 +745,31 @@
   <div class="slide-dots" id="dots"></div>
   <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
   <span class="slide-counter" id="counter">1 / 15</span>
+  <button class="nav-btn" onclick="openSettings()" title="Ubah nama kampus & angka untuk prospek">⚙</button>
 </div>
 
 <script>
   // ============================================================
-  // KONFIGURASI KAMPUS — deck ini GENERIK. Ganti 2 nilai di bawah
-  // untuk memakai di kampus tertentu, atau override via URL tanpa
-  // edit file:
+  // PENGATURAN KAMPUS — tim marketing bisa mengubah nama kampus &
+  // angka kunci lewat tombol ⚙ di navigasi bawah (tersimpan di
+  // browser ini), atau lewat URL:
   //   ?campus=UNAIR&campusFull=Universitas%20Airlangga
-  // Token {{KAMPUS}} / {{KAMPUS_FULL}} di dalam HTML otomatis
-  // diganti dengan nilai di bawah ini.
+  //   &penurunan=25%25&pendaftarSebelum=1200&pendaftarTerakhir=900
+  // Token {{...}} di HTML diganti otomatis dari nilai di bawah ini.
   // ============================================================
-  const BRAND = {
-    short: 'NAMA KAMPUS',
-    full: 'Nama Universitas Anda',
+  const BRAND_DEFAULT = {
+    short: 'UKWMS',
+    full: 'Universitas Kristen Widya Mandala Surabaya',
+    penurunan: '30%',
+    pendaftarSebelum: '1000',
+    pendaftarTerakhir: '700',
   };
+  const BRAND = Object.assign({}, BRAND_DEFAULT);
+  const ORIGINAL_TITLE = document.title;
 
-  (function applyBranding() {
-    const params = new URLSearchParams(location.search);
-    if (params.get('campus')) BRAND.short = params.get('campus').trim();
-    if (params.get('campusFull')) BRAND.full = params.get('campusFull').trim();
-
-    // Kumpulkan semua text node (abaikan script/style) lalu ganti token.
+  // Simpan text node asli sekali — dipakai ulang oleh applyBranding().
+  const textNodes = [];
+  (function collectTextNodes() {
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_TEXT,
@@ -739,21 +782,89 @@
         },
       }
     );
-    const nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
-
-    for (const n of nodes) {
-      const t = n.nodeValue;
-      if (t.indexOf('{{KAMPUS}}') === -1 && t.indexOf('{{KAMPUS_FULL}}') === -1) continue;
-      n.nodeValue = t
-        .split('{{KAMPUS_FULL}}').join(BRAND.full)
-        .split('{{KAMPUS}}').join(BRAND.short);
+    while (walker.nextNode()) {
+      textNodes.push({ el: walker.currentNode, original: walker.currentNode.nodeValue });
     }
-
-    document.title = document.title
-      .split('{{KAMPUS_FULL}}').join(BRAND.full)
-      .split('{{KAMPUS}}').join(BRAND.short);
   })();
+
+  const TOKEN_RE = /\{\{KAMPUS_FULL\}\}|\{\{KAMPUS\}\}|\{\{PENURUNAN\}\}|\{\{PENDAFTAR_SEBELUM\}\}|\{\{PENDAFTAR_TERAKHIR\}\}/g;
+
+  function applyBranding() {
+    const map = {
+      '{{KAMPUS}}': BRAND.short,
+      '{{KAMPUS_FULL}}': BRAND.full,
+      '{{PENURUNAN}}': BRAND.penurunan,
+      '{{PENDAFTAR_SEBELUM}}': BRAND.pendaftarSebelum,
+      '{{PENDAFTAR_TERAKHIR}}': BRAND.pendaftarTerakhir,
+    };
+    for (const { el, original } of textNodes) {
+      if (original.indexOf('{{') === -1) continue;
+      el.nodeValue = original.replace(TOKEN_RE, (m) => map[m] || m);
+    }
+    document.title = ORIGINAL_TITLE.replace(TOKEN_RE, (m) => map[m] || m);
+  }
+
+  // Prioritas nilai: URL params > localStorage (menu ⚙) > default.
+  const PARAM_MAP = {
+    campus: 'short',
+    campusFull: 'full',
+    penurunan: 'penurunan',
+    pendaftarSebelum: 'pendaftarSebelum',
+    pendaftarTerakhir: 'pendaftarTerakhir',
+  };
+  function loadBrand() {
+    const params = new URLSearchParams(location.search);
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('neocampus_brand') || '{}'); } catch (e) { saved = {}; }
+    Object.keys(PARAM_MAP).forEach((p) => {
+      const key = PARAM_MAP[p];
+      BRAND[key] = params.get(p) || saved[key] || BRAND_DEFAULT[key];
+    });
+  }
+
+  // ---- Menu Pengaturan Kampus (tombol ⚙) ----
+  function openSettings() {
+    document.getElementById('f-campus').value = BRAND.short;
+    document.getElementById('f-campusFull').value = BRAND.full;
+    document.getElementById('f-penurunan').value = BRAND.penurunan;
+    document.getElementById('f-pendaftarSebelum').value = BRAND.pendaftarSebelum;
+    document.getElementById('f-pendaftarTerakhir').value = BRAND.pendaftarTerakhir;
+    document.getElementById('modal-settings').classList.add('open');
+  }
+
+  function saveSettings() {
+    BRAND.short = document.getElementById('f-campus').value.trim() || BRAND_DEFAULT.short;
+    BRAND.full = document.getElementById('f-campusFull').value.trim() || BRAND_DEFAULT.full;
+    BRAND.penurunan = document.getElementById('f-penurunan').value.trim() || BRAND_DEFAULT.penurunan;
+    BRAND.pendaftarSebelum = document.getElementById('f-pendaftarSebelum').value.trim() || BRAND_DEFAULT.pendaftarSebelum;
+    BRAND.pendaftarTerakhir = document.getElementById('f-pendaftarTerakhir').value.trim() || BRAND_DEFAULT.pendaftarTerakhir;
+    applyBranding();
+    try { localStorage.setItem('neocampus_brand', JSON.stringify(BRAND)); } catch (e) {}
+    document.getElementById('modal-settings').classList.remove('open');
+  }
+
+  function resetBrand() {
+    Object.assign(BRAND, BRAND_DEFAULT);
+    applyBranding();
+    try { localStorage.removeItem('neocampus_brand'); } catch (e) {}
+    document.getElementById('modal-settings').classList.remove('open');
+  }
+
+  function copyBrandLink() {
+    const p = new URLSearchParams();
+    Object.keys(PARAM_MAP).forEach((param) => p.set(param, BRAND[PARAM_MAP[param]]));
+    const url = location.origin + location.pathname + '?' + p.toString();
+    const done = () => alert('Link kustom disalin:\n' + url);
+    const fallback = () => prompt('Salin link ini:', url);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done).catch(fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  loadBrand();
+  applyBranding();
 
   let current = 1;
   const total = document.querySelectorAll('.slide').length; 
@@ -814,6 +925,7 @@
   }
 
   document.addEventListener('keydown', (e) => {
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
     if (e.key === 'Escape') {
       document.querySelectorAll('.proposal-modal.open').forEach(m => m.classList.remove('open'));
       return;

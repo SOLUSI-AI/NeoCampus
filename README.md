@@ -18,36 +18,54 @@ https://solusi-ai.github.io/NeoCampus/
 > Repo berada di bawah organisasi **SOLUSI-AI**, jadi URL memakai domain org
 > (`solusi-ai.github.io`), bukan domain username.
 >
-> Default menampilkan nama generik (`NAMA KAMPUS`). Ganti via URL atau config —
-> lihat [Kustomisasi Nama Kampus](#kustomisasi-nama-kampus).
+> Default menampilkan `UKWMS`. Tim marketing bisa mengubah nama kampus sesuai
+> prospek via menu ⚙ di deck atau URL — lihat
+> [Kustomisasi Nama Kampus](#kustomisasi-nama-kampus).
 
 ## Kustomisasi Nama Kampus
 
-Nama kampus **tidak di-hardcode**. Di dalam HTML memakai token `{{KAMPUS}}`
-(nama singkat) dan `{{KAMPUS_FULL}}` (nama lengkap), yang diganti otomatis oleh
-blok `KONFIGURASI KAMPUS` di bagian `<script>`.
+Nama kampus & angka kunci deck **tidak di-hardcode** — bisa diubah sesuai
+prospek oleh tim marketing. Default: `UKWMS`.
 
-### Cara 1 — Via URL (tanpa edit file)
+### Cara 1 — Menu ⚙ di dalam deck (paling mudah, untuk tim marketing)
+
+Klik tombol **⚙** di navigasi bawah, lalu isi:
+
+- **Nama kampus** (singkat & lengkap)
+- **Angka kunci**: penurunan pendaftar (%), rata-rata pendaftar/th (lalu),
+  pendaftar/th (kini)
+
+Klik **Simpan & Terapkan** — tersimpan otomatis di browser (localStorage).
+Tombol **Salin Link Kustom** membuat URL dengan nama kampus terisi, siap
+langsung dikirim ke prospek. **Reset** mengembalikan ke default UKWMS.
+
+### Cara 2 — Via URL (tanpa edit file)
 
 ```text
-https://solusi-ai.github.io/NeoCampus/?campus=UNAIR&campusFull=Universitas%20Airlangga
+https://solusi-ai.github.io/NeoCampus/?campus=UNAIR&campusFull=Universitas%20Airlangga&penurunan=25%25&pendaftarSebelum=1200&pendaftarTerakhir=900
 ```
 
-- `campus` → nama singkat (default: `NAMA KAMPUS`)
-- `campusFull` → nama lengkap (default: `Nama Universitas Anda`)
+- `campus` → nama singkat (default: `UKWMS`)
+- `campusFull` → nama lengkap
+- `penurunan` → persen penurunan (default: `30%`)
+- `pendaftarSebelum` → rata-rata pendaftar/th sebelumnya (default: `1000`)
+- `pendaftarTerakhir` → pendaftar/th dua tahun terakhir (default: `700`)
 
-### Cara 2 — Edit konfigurasi di `index.html`
+### Cara 3 — Edit default di `index.html`
 
-Cari blok `KONFIGURASI KAMPUS` di bagian `<script>`:
+Cari blok `BRAND_DEFAULT` di bagian `<script>`:
 
 ```js
-const BRAND = {
-  short: 'NAMA KAMPUS',
-  full: 'Nama Universitas Anda',
+const BRAND_DEFAULT = {
+  short: 'UKWMS',
+  full: 'Universitas Kristen Widya Mandala Surabaya',
+  penurunan: '30%',
+  pendaftarSebelum: '1000',
+  pendaftarTerakhir: '700',
 };
 ```
 
-Ubah kedua nilai, commit & push — GitHub Pages otomatis rebuild.
+Ubah nilainya, commit & push — GitHub Pages otomatis rebuild.
 
 ## Three Pillars
 
