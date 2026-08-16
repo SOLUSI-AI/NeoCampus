@@ -15,59 +15,121 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style type="text/tailwindcss">
     @theme {
-      --color-bg: #0f172a;
+      --color-bg: #0b1220;
       --color-bg-deep: #020617;
-      --color-surface: #1f2937;
-      --color-text: #f9fafb;
-      --color-text-secondary: #f1f5f9;
+      --color-surface: #16213a;
+      --color-surface-2: #1d2b47;
+      --color-text: #f8fafc;
+      --color-text-secondary: #cbd5e1;
       --color-text-muted: #94a3b8;
-      --color-accent-1: #8BC34A;
-      --color-accent-2: #F5F0D0;
-      --color-accent-3: #D4A017;
-      --color-glass-bg: rgba(15, 23, 42, 0.98);
-      --color-glass-border: rgba(148, 163, 184, 0.4);
-      --color-vignette: rgba(0,0,0,0.7);
+      --color-accent-1: #4ade80;
+      --color-accent-1-bright: #86efac;
+      --color-accent-1-deep: #16a34a;
+      --color-accent-2: #fdf6e3;
+      --color-accent-3: #eab308;
+      --color-glass-bg: rgba(11, 18, 32, 0.82);
+      --color-glass-border: rgba(148, 163, 184, 0.28);
+      --color-vignette: rgba(0,0,0,0.62);
       --font-display: 'Instrument Serif', Georgia, serif;
       --font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
   </style>
   <style>
-    :root { --color-bg:#0f172a; --color-text:#f9fafb; --glow-color-rgb:139,195,74; }
+    :root { --color-bg:#0b1220; --color-text:#f8fafc; --glow-color-rgb:74,222,128; }
     *,*::before,*::after{box-sizing:border-box;}
     html,body{margin:0;background:var(--color-bg);}  
     body{font-family:var(--font-body);color:var(--color-text);overflow:hidden;height:100vh;width:100vw;}
     .deck{width:100vw;height:100vh;position:relative;}
-    .slide{position:absolute;inset:0;background:radial-gradient(circle at top,#111827 0,#020617 58%);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.95);transition:opacity .7s ease,transform .7s ease;pointer-events:none;overflow:hidden;}
-    .slide.active{opacity:1;transform:scale(1);pointer-events:auto;}
+    .slide{position:absolute;inset:0;background:radial-gradient(circle at top,#111827 0,#020617 58%);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;overflow:hidden;transition:opacity .7s ease,transform .7s cubic-bezier(.22,1,.36,1),filter .7s ease;transform:scale(.96);filter:blur(6px);}
+    .slide.active{opacity:1;transform:scale(1);filter:blur(0);pointer-events:auto;}
+    .slide.from-right{transform:translateX(6vw) scale(.96);}
+    .slide.from-left{transform:translateX(-6vw) scale(.96);}
+    .slide.from-jump{transform:translateY(4vh) scale(.94);}
+    [data-speed]{will-change:transform;}
     .slide>.content{position:relative;z-index:2;width:100%;max-width:1100px;padding:clamp(1.8rem,4vw,4rem); padding-bottom:clamp(5rem,10vh,6.5rem); overflow-y: auto; max-height: 85vh;}
     .nav-controls{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;z-index:100;background:rgba(15,23,42,0.9);backdrop-filter:blur(14px);padding:10px 22px;border-radius:999px;border:1px solid rgba(148,163,184,0.55);box-shadow:0 18px 45px rgba(15,23,42,0.95); width: max-content; max-width: 95vw;}
-    .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:rgba(30,64,175,0.35);color:#e5fbea;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .25s,transform .25s,box-shadow .25s; flex-shrink: 0;}
-    .nav-btn:hover{background:rgba(56,189,248,0.9);transform:translateY(-1px);box-shadow:0 0 18px rgba(56,189,248,0.85);}  
-    .nav-btn.settings-btn{background:rgba(139,195,74,0.16);border:1px solid rgba(139,195,74,0.45);color:#d9f99d;}  
-    .nav-btn.settings-btn:hover{background:rgba(139,195,74,0.9);color:#0f172a;}  
+    .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.25);color:#d9f99d;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .25s,transform .25s,box-shadow .25s; flex-shrink: 0;}
+    .nav-btn:hover{background:rgba(74,222,128,0.9);color:#020617;transform:translateY(-1px);box-shadow:0 0 18px rgba(74,222,128,0.55);}  
+    .nav-btn.settings-btn{background:rgba(74,222,128,0.14);border:1px solid rgba(74,222,128,0.4);color:#d9f99d;}  
+    .nav-btn.settings-btn:hover{background:rgba(74,222,128,0.9);color:#020617;}  
     .slide-dots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
-    .slide-dots .dot{width:9px;height:9px;border-radius:999px;background:rgba(148,163,184,0.45);cursor:pointer;transition:background .3s,transform .3s;}
-    .slide-dots .dot.active{background:#8BC34A;transform:scale(1.35);}  
+    .slide-dots .dot{width:9px;height:9px;border-radius:999px;background:rgba(148,163,184,0.45);cursor:pointer;transition:background .3s,transform .3s;position:relative;}
+    .slide-dots .dot.active{background:#4ade80;transform:scale(1.35);}
+    .slide-dots .dot.active::after{content:'';position:absolute;inset:-4px;border-radius:999px;border:1px solid rgba(74,222,128,.65);animation:dot-pulse 2.4s ease-out infinite;}
+    @keyframes dot-pulse{0%{transform:scale(.6);opacity:.9;}100%{transform:scale(1.45);opacity:0;}}  
     .slide-counter{font-size:.78rem;color:var(--color-text-muted);min-width:46px;text-align:center;font-variant-numeric:tabular-nums; white-space: nowrap;}
     @media (max-width: 640px) {
       .slide-dots { display: none; }
       .nav-controls { gap: 24px; bottom: 16px; padding: 12px 24px; }
       .slide>.content { max-height: 90vh; }
     }
-    .reveal{opacity:0;transform:translateY(18px);}  
+    .reveal{opacity:0;transform:translateY(18px);filter:blur(6px);}  
     .gradient-mesh{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
-    .blob{position:absolute;border-radius:999px;filter:blur(80px);opacity:.16;animation:float-slow 18s ease-in-out infinite;}
-    .blob:nth-child(2){animation-duration:22s;animation-direction:reverse;opacity:.12;}
-    .blob:nth-child(3){animation-duration:26s;opacity:.1;}
-    @keyframes float-slow{0%{transform:translate3d(0,0,0) scale(1);}25%{transform:translate3d(60px,-40px,0) scale(1.1);}50%{transform:translate3d(-50px,40px,0) scale(.96);}75%{transform:translate3d(40px,10px,0) scale(1.05);}100%{transform:translate3d(0,0,0) scale(1);}}
-    .slide::before{content:'';position:absolute;inset:-40px;z-index:1;pointer-events:none;background-image:radial-gradient(circle at 10% 0%,rgba(139,195,74,0.23) 0,transparent 55%),radial-gradient(circle at 90% 100%,rgba(245,240,208,0.24) 0,transparent 55%);mix-blend-mode:screen;opacity:.6;}
-    .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,var(--color-vignette) 100%);}  
+    .blob{position:absolute;border-radius:999px;filter:blur(90px);opacity:.14;will-change:transform;animation:float-slow 20s ease-in-out infinite;}
+    .blob:nth-child(2){animation-duration:26s;animation-direction:reverse;opacity:.11;}
+    .blob:nth-child(3){animation-duration:30s;opacity:.09;}
+    @keyframes float-slow{0%{transform:translate3d(0,0,0) scale(1);}20%{transform:translate3d(70px,-50px,0) scale(1.12);}40%{transform:translate3d(-60px,30px,0) scale(.94);}60%{transform:translate3d(50px,60px,0) scale(1.06);}80%{transform:translate3d(-30px,-20px,0) scale(.98);}100%{transform:translate3d(0,0,0) scale(1);}}
+    .slide::before{content:'';position:absolute;inset:-40px;z-index:1;pointer-events:none;background-image:radial-gradient(circle at 10% 0%,rgba(74,222,128,0.20) 0,transparent 55%),radial-gradient(circle at 90% 100%,rgba(253,246,227,0.18) 0,transparent 55%);mix-blend-mode:screen;opacity:.55;}
+    .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,var(--color-vignette) 100%);}
+    /* Grain film halus */
+    .grain{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");}
+    /* Partikel cahaya ambient */
+    #particles{position:fixed;inset:0;z-index:2;pointer-events:none;}
+    /* Foto latar emosional + overlay agar menyatu dengan tema */
+    .photo-bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;}
+    .photo-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(2,6,23,.55) 0%,rgba(11,18,32,.72) 55%,#020617 100%);}
+    .photo-overlay.tint{background:linear-gradient(180deg,rgba(2,6,23,.6),rgba(11,18,32,.78) 60%,#020617 100%),radial-gradient(circle at 18% 22%,rgba(74,222,128,.22),transparent 55%);}
     .mouse-spotlight{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:.65;}
-    .glass-panel{background:rgba(15, 23, 42, 0.85);border:1px solid var(--color-glass-border);box-shadow:0 22px 60px rgba(15,23,42,0.95);backdrop-filter:blur(18px);}  
-    .badge-pill{border-radius:999px;padding:.18rem .9rem;border:1px solid rgba(148,163,184,0.65);background:linear-gradient(to right,rgba(15,23,42,0.85),rgba(15,23,42,0.5));}
+    .glass-panel{background:linear-gradient(160deg,rgba(22,33,58,.72),rgba(11,18,32,.82));border:1px solid var(--color-glass-border);box-shadow:0 22px 60px rgba(2,6,23,.6);backdrop-filter:blur(18px);}  
+    .badge-pill{border-radius:999px;padding:.18rem .9rem;border:1px solid rgba(148,163,184,0.28);background:linear-gradient(to right,rgba(11,18,32,0.85),rgba(11,18,32,0.5));backdrop-filter:blur(8px);}
+    /* Kicker: label kecil dengan garis aksen */
+    .kicker{display:inline-flex;align-items:center;gap:.6rem;font-size:.72rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--color-text-muted);}
+    .kicker::after{content:'';width:2.2rem;height:1px;background:linear-gradient(to right,var(--color-accent-1),transparent);}
+    .kicker-accent{color:var(--color-accent-1);}
+    /* Icon chip */
+    .icon-chip{width:2.6rem;height:2.6rem;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(74,222,128,.14),rgba(22,163,74,.05));border:1px solid rgba(74,222,128,.35);color:var(--color-accent-1-bright);flex-shrink:0;box-shadow:0 8px 22px rgba(2,6,23,.45);}
+    /* Stat tile + count-up */
+    .stat-tile{background:rgba(22,33,58,.55);border:1px solid rgba(148,163,184,.18);border-radius:1rem;padding:1.1rem 1.25rem;backdrop-filter:blur(12px);box-shadow:0 18px 45px rgba(2,6,23,.5);}
+    .stat-value{font-size:clamp(1.8rem,3.2vw,2.6rem);font-weight:800;letter-spacing:-.02em;color:var(--color-accent-1-bright);font-variant-numeric:tabular-nums;line-height:1;}
+    .stat-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--color-text-muted);font-weight:600;margin-top:.45rem;}
+    /* Tombol */
+    .btn-primary{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--color-accent-1-bright),var(--color-accent-1-deep));color:#020617;font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;padding:.65rem 1.3rem;border-radius:999px;box-shadow:0 10px 30px rgba(74,222,128,.28);transition:transform .25s cubic-bezier(.4,0,.2,1),box-shadow .25s;cursor:pointer;}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(74,222,128,.4);}
+    .btn-ghost{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(148,163,184,.35);color:var(--color-text-secondary);font-weight:600;font-size:.78rem;padding:.65rem 1.3rem;border-radius:999px;transition:border-color .25s,color .25s,transform .25s;background:rgba(11,18,32,.4);cursor:pointer;}
+    .btn-ghost:hover{border-color:var(--color-accent-1);color:var(--color-accent-1-bright);transform:translateY(-2px);}
+    /* Donut ring SVG */
+    .donut-wrap{position:relative;width:clamp(9rem,18vw,12.5rem);height:clamp(9rem,18vw,12.5rem);margin:0 auto;}
+    .donut-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}
+    .donut-track{fill:none;stroke:rgba(148,163,184,.16);stroke-width:11;}
+    .donut-bar{fill:none;stroke:url(#donut-grad);stroke-width:11;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 1.6s cubic-bezier(.22,1,.36,1);}
+    .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+    .donut-value{font-size:clamp(1.7rem,3vw,2.3rem);font-weight:800;color:var(--color-accent-1-bright);font-variant-numeric:tabular-nums;line-height:1;}
+    .donut-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.16em;color:var(--color-text-muted);margin-top:.3rem;}
+    /* Timeline vertical */
+    .timeline{position:relative;padding-left:0;}
+    .tl-line{position:absolute;left:1.02rem;top:1.3rem;bottom:1.3rem;width:2px;background:rgba(148,163,184,.16);overflow:hidden;border-radius:2px;}
+    .tl-line::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,var(--color-accent-1-bright),var(--color-accent-1-deep));transform:scaleY(0);transform-origin:top;transition:transform 1.4s cubic-bezier(.22,1,.36,1);}
+    .timeline.run .tl-line::after{transform:scaleY(1);}
+    .tl-item{position:relative;padding-left:3.1rem;padding-bottom:1.5rem;}
+    .tl-item:last-child{padding-bottom:0;}
+    .tl-node{position:absolute;left:.72rem;top:.12rem;width:.9rem;height:.9rem;border-radius:999px;background:#020617;border:2px solid var(--color-accent-1);opacity:0;transform:scale(.4);transition:opacity .4s ease,transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 14px rgba(74,222,128,.55);}
+    .timeline.run .tl-node{opacity:1;transform:scale(1);}
+    .timeline.run .tl-item:nth-child(1) .tl-node{transition-delay:.2s;}
+    .timeline.run .tl-item:nth-child(2) .tl-node{transition-delay:.55s;}
+    .timeline.run .tl-item:nth-child(3) .tl-node{transition-delay:.9s;}
+    .timeline.run .tl-item:nth-child(4) .tl-node{transition-delay:1.25s;}
+    /* Stepper */
+    .stepper{display:flex;flex-direction:column;gap:.25rem;}
+    .step{display:flex;gap:1.05rem;align-items:flex-start;padding:.55rem 0;opacity:0;transform:translateX(16px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1);}
+    .stepper.run .step{opacity:1;transform:translateX(0);}
+    .stepper.run .step:nth-child(1){transition-delay:.15s;}
+    .stepper.run .step:nth-child(2){transition-delay:.4s;}
+    .stepper.run .step:nth-child(3){transition-delay:.65s;}
+    .stepper.run .step:nth-child(4){transition-delay:.9s;}
+    .step-num{width:2.1rem;height:2.1rem;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:#020617;background:linear-gradient(135deg,var(--color-accent-1-bright),var(--color-accent-1-deep));flex-shrink:0;box-shadow:0 8px 20px rgba(74,222,128,.35);}
     
     .grid-menu-card{transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(148,163,184,0.15); background: rgba(30,41,59,0.3);}
-    .grid-menu-card:hover{transform: translateY(-4px); border-color: var(--color-accent-1); box-shadow: 0 15px 30px rgba(139,195,74,0.2); background: rgba(30,41,59,0.7);}
+    .grid-menu-card:hover{transform: translateY(-4px); border-color: var(--color-accent-1); box-shadow: 0 15px 30px rgba(74,222,128,0.2); background: rgba(22,33,58,0.7);}
     
     .proposal-modal {
       position: fixed;
@@ -97,92 +159,239 @@
   </style>
 </head>
 <body>
+<!-- SVG defs: gradien donut + sprite ikon (gaya stroke konsisten) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="donut-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <g id="i-funnel"><path d="M3 4h18l-7 8.2V20l-4 2v-9.8L3 4z"/></g>
+    <g id="i-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></g>
+    <g id="i-career"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></g>
+    <g id="i-cube"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></g>
+    <g id="i-grad"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></g>
+    <g id="i-chart"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></g>
+    <g id="i-brief"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></g>
+    <g id="i-award"><circle cx="12" cy="8" r="7"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/></g>
+    <g id="i-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></g>
+    <g id="i-mega"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></g>
+    <g id="i-leaf"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></g>
+    <g id="i-building"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/><path d="M12 14h.01"/></g>
+    <g id="i-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></g>
+    <g id="i-spark"><path d="M12 3l1.9 5.8L19.7 10l-5.8 1.9L12 17.7l-1.9-5.8L4.3 10l5.8-1.9L12 3z"/></g>
+    <g id="i-arrow"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></g>
+    <g id="i-check"><path d="M20 6L9 17l-5-5"/></g>
+    <g id="i-zap"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></g>
+    <g id="i-target"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></g>
+    <g id="i-screen"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></g>
+    <g id="i-phone"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></g>
+    <g id="i-shield"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></g>
+    <g id="i-globe"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></g>
+  </defs>
+</svg>
 <div class="mouse-spotlight"></div>
+<div class="grain" aria-hidden="true"></div>
+<canvas id="particles" aria-hidden="true"></canvas>
 <div class="deck">
 
   <!-- =======================================================
        SLIDE 1 - 14: STRATEGI UTAMA / MODAL PEMBUKAAN (UTUH)
        ======================================================= -->
-  <div class="slide slide-1 active" data-slide="1">
-    <div class="gradient-mesh">
-      <div class="blob" style="width:520px;height:520px;top:-140px;right:-120px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
-      <div class="blob" style="width:360px;height:360px;bottom:-120px;left:-100px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
-      <div class="blob" style="width:260px;height:260px;top:55%;left:10%;background:radial-gradient(circle,#D4A017,#fb7185);"></div>
+  <div class="slide slide-1 active" data-slide="1" data-ambient="green">
+    <div class="photo-bg" data-speed="slow" style="background-image:url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1800&q=60')"></div>
+    <div class="photo-overlay tint"></div>
+    <div class="gradient-mesh" data-speed="slow">
+      <div class="blob" style="width:520px;height:520px;top:-140px;right:-120px;background:radial-gradient(circle,#4ADE80,#16A34A);"></div>
+      <div class="blob" style="width:360px;height:360px;bottom:-120px;left:-100px;background:radial-gradient(circle,#FDF6E3,#EAB308);"></div>
     </div>
     <div class="content flex flex-col items-center text-center">
       <div class="inline-flex items-center gap-2 badge-pill text-xs tracking-[0.22em] uppercase text-text-muted mb-4 reveal">
         <span class="w-1.5 h-1.5 rounded-full bg-accent-1"></span>
         <span>Strategi Percepatan Enrollment {{KAMPUS}}</span>
       </div>
-      <!-- MODIFIKASI TERKUNCI: Judul Besar Sesuai Request Baru Anda -->
       <h1 class="font-display text-[clamp(2.2rem,4.5vw,4.4rem)] font-black bg-linear-to-br from-accent-1 via-accent-2 to-accent-1 bg-clip-text text-transparent tracking-tight mb-4 reveal">
-        Menuju Ekosistem Futuristik {{KAMPUS}}:<br class="hidden sm:inline" />
-        Akselerasi Generasi Inovator Berbasis AI & FinTech
+        Menuju <em class="italic text-accent-2">Ekosistem Futuristik</em> {{KAMPUS}}:<br class="hidden sm:inline" />
+        Akselerasi Generasi Inovator Berbasis AI &amp; FinTech
       </h1>
       <p class="max-w-3xl text-[clamp(0.95rem,1.4vw,1.15rem)] text-text-secondary leading-relaxed text-balance reveal">
         Menjawab penurunan ~{{PENURUNAN}} pendaftar dalam dua tahun terakhir dengan mengubah {{KAMPUS}} dari sekadar “tempat kuliah”
         menjadi ekosistem yang langsung menciptakan nilai ekonomi dan jalur karier nyata bagi mahasiswa.
       </p>
+      <div class="flex flex-wrap items-center justify-center gap-3 mt-8 reveal">
+        <div class="glass-panel rounded-2xl px-4 py-3 flex items-center gap-3">
+          <span class="icon-chip w-9 h-9"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-funnel"/></svg></span>
+          <span class="text-left"><span class="block text-[10px] uppercase tracking-widest text-text-muted">Pilar 1</span><span class="block text-xs font-bold text-text">Early-Engagement</span></span>
+        </div>
+        <div class="glass-panel rounded-2xl px-4 py-3 flex items-center gap-3">
+          <span class="icon-chip w-9 h-9"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-heart"/></svg></span>
+          <span class="text-left"><span class="block text-[10px] uppercase tracking-widest text-text-muted">Pilar 2</span><span class="block text-xs font-bold text-text">Inclusive &amp; Ethical</span></span>
+        </div>
+        <div class="glass-panel rounded-2xl px-4 py-3 flex items-center gap-3">
+          <span class="icon-chip w-9 h-9"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-career"/></svg></span>
+          <span class="text-left"><span class="block text-[10px] uppercase tracking-widest text-text-muted">Pilar 3</span><span class="block text-xs font-bold text-text">Career Integration</span></span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="slide slide-2" data-slide="2">
-    <div class="gradient-mesh">
-      <div class="blob" style="width:420px;height:420px;top:-120px;right:-140px;background:radial-gradient(circle,#8BC34A,#22C55E);"></div>
-      <div class="blob" style="width:300px;height:300px;bottom:-120px;left:-60px;background:radial-gradient(circle,#F5F0D0,#FACC15);"></div>
+  <!-- SLIDE 2: AGENDA -->
+  <div class="slide slide-2" data-slide="2" data-ambient="cream">
+    <div class="gradient-mesh" data-speed="slow">
+      <div class="blob" style="width:380px;height:380px;top:-120px;left:-100px;background:radial-gradient(circle,#FDF6E3,#EAB308);"></div>
+      <div class="blob" style="width:320px;height:320px;bottom:-120px;right:-80px;background:radial-gradient(circle,#4ADE80,#16A34A);"></div>
     </div>
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Konteks & Masalah</p>
-      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">Kenapa Enrollment Turun? Masalahnya Bukan Sekadar Promosi</h2>
-      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">{{KAMPUS}} mengalami penurunan pendaftar sekitar {{PENURUNAN}} dalam dua tahun terakhir—sejalan dengan tekanan yang juga dialami banyak perguruan tinggi swasta—di tengah naiknya jalur mandiri PTN dan alternatif pendidikan digital.</p>
-      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">Tren nasional:</span> banyak PTS mengalami penurunan peminat, sementara jalur mandiri PTN dan bootcamp digital makin agresif menawarkan jalan pintas ke dunia kerja.</li>
-        <li><span class="font-semibold">Realitas {{KAMPUS}}:</span> dari rata-rata ±{{PENDAFTAR_SEBELUM}} pendaftar per tahun, dua tahun terakhir turun ke kisaran ±{{PENDAFTAR_TERAKHIR}} pendaftar per tahun ajaran.</li>
-        <li><span class="font-semibold">Persepsi pasar:</span> orang tua dan siswa mulai mempertanyakan <em>return on investment</em> kuliah jika outcome karier dan nilai tambah ekonominya tidak terlihat jelas.</li>
+      <span class="kicker mb-3 reveal">Peta Presentasi</span>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-6 reveal">Agenda Hari Ini</h2>
+      <div class="grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-3xl">
+        <div class="glass-panel rounded-2xl p-4 flex items-center gap-4 reveal">
+          <span class="text-3xl font-black font-display text-accent-1/60">01</span>
+          <div>
+            <div class="flex items-center gap-2 mb-1"><svg class="w-4 h-4 text-accent-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-target"/></svg><span class="font-bold text-sm">Konteks &amp; Masalah</span></div>
+            <p class="text-xs text-text-muted">Kenapa enrollment turun, dan apa yang sebenarnya dicari pasar.</p>
+          </div>
+        </div>
+        <div class="glass-panel rounded-2xl p-4 flex items-center gap-4 reveal">
+          <span class="text-3xl font-black font-display text-accent-1/60">02</span>
+          <div>
+            <div class="flex items-center gap-2 mb-1"><svg class="w-4 h-4 text-accent-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-spark"/></svg><span class="font-bold text-sm">Insight Gen Z &amp; Orang Tua</span></div>
+            <p class="text-xs text-text-muted">Apa yang dicari generasi baru dan wali murid.</p>
+          </div>
+        </div>
+        <div class="glass-panel rounded-2xl p-4 flex items-center gap-4 reveal">
+          <span class="text-3xl font-black font-display text-accent-1/60">03</span>
+          <div>
+            <div class="flex items-center gap-2 mb-1"><svg class="w-4 h-4 text-accent-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-funnel"/></svg><span class="font-bold text-sm">Tiga Pilar Strategi</span></div>
+            <p class="text-xs text-text-muted">Mesin peningkatan enrollment yang terintegrasi.</p>
+          </div>
+        </div>
+        <div class="glass-panel rounded-2xl p-4 flex items-center gap-4 reveal">
+          <span class="text-3xl font-black font-display text-accent-1/60">04</span>
+          <div>
+            <div class="flex items-center gap-2 mb-1"><svg class="w-4 h-4 text-accent-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-career"/></svg><span class="font-bold text-sm">Roadmap &amp; Mandat</span></div>
+            <p class="text-xs text-text-muted">Dua siklus PMB dan dukungan yang dibutuhkan.</p>
+          </div>
+        </div>
+        <div class="glass-panel rounded-2xl p-4 flex items-center gap-4 sm:col-span-2 reveal">
+          <span class="text-3xl font-black font-display text-accent-1/60">05</span>
+          <div>
+            <div class="flex items-center gap-2 mb-1"><svg class="w-4 h-4 text-accent-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-globe"/></svg><span class="font-bold text-sm">Portal 8 Program</span></div>
+            <p class="text-xs text-text-muted">Deep-dive blueprint tiap usulan program.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide slide-3" data-slide="3" data-ambient="green">
+    <div class="gradient-mesh" data-speed="mid">
+      <div class="blob" style="width:420px;height:420px;top:-120px;right:-140px;background:radial-gradient(circle,#4ADE80,#16A34A);"></div>
+      <div class="blob" style="width:300px;height:300px;bottom:-120px;left:-60px;background:radial-gradient(circle,#FDF6E3,#EAB308);"></div>
+    </div>
+    <div class="content">
+      <span class="kicker kicker-accent mb-3 reveal">Konteks &amp; Masalah</span>
+      <h2 class="font-display text-[clamp(1.9rem,3.8vw,2.6rem)] font-semibold mb-3 reveal">Kenapa Enrollment Turun? Masalahnya Bukan Sekadar Promosi</h2>
+      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-6 reveal">{{KAMPUS}} mengalami penurunan pendaftar sekitar {{PENURUNAN}} dalam dua tahun terakhir—sejalan dengan tekanan yang juga dialami banyak perguruan tinggi swasta.</p>
+      <div class="grid md:grid-cols-[auto_1fr] gap-7 md:gap-12 items-center mb-6">
+        <div class="donut-wrap reveal">
+          <svg viewBox="0 0 120 120">
+            <circle class="donut-track" cx="60" cy="60" r="48" pathLength="100"/>
+            <circle class="donut-bar" cx="60" cy="60" r="48" pathLength="100"/>
+          </svg>
+          <div class="donut-center">
+            <span class="donut-value count-up">{{PENURUNAN}}</span>
+            <span class="donut-label">Penurunan pendaftar</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="stat-tile reveal">
+            <span class="stat-value count-up">{{PENDAFTAR_SEBELUM}}</span>
+            <span class="stat-label">Pendaftar/th — sebelumnya</span>
+          </div>
+          <div class="stat-tile reveal">
+            <span class="stat-value count-up">{{PENDAFTAR_TERAKHIR}}</span>
+            <span class="stat-label">Pendaftar/th — kini</span>
+          </div>
+        </div>
+      </div>
+      <ul class="space-y-2.5 text-sm md:text-base text-text-secondary reveal">
+        <li class="flex gap-2.5"><span class="text-accent-1 mt-0.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span><span><span class="font-semibold">Tren nasional:</span> banyak PTS mengalami penurunan peminat, sementara jalur mandiri PTN dan bootcamp digital makin agresif menawarkan jalan pintas ke dunia kerja.</span></li>
+        <li class="flex gap-2.5"><span class="text-accent-1 mt-0.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span><span><span class="font-semibold">Realitas {{KAMPUS}}:</span> dari rata-rata ±{{PENDAFTAR_SEBELUM}} pendaftar per tahun, dua tahun terakhir turun ke kisaran ±{{PENDAFTAR_TERAKHIR}} pendaftar per tahun ajaran.</span></li>
+        <li class="flex gap-2.5"><span class="text-accent-1 mt-0.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span><span><span class="font-semibold">Persepsi pasar:</span> orang tua dan siswa mulai mempertanyakan <em>return on investment</em> kuliah jika outcome karier dan nilai tambah ekonominya tidak terlihat jelas.</span></li>
       </ul>
     </div>
   </div>
 
-  <div class="slide slide-3" data-slide="3">
+  <div class="slide slide-4" data-slide="4" data-ambient="cream">
+    <div class="gradient-mesh" data-speed="mid">
+      <div class="blob" style="width:340px;height:340px;top:-100px;right:-80px;background:radial-gradient(circle,#FDF6E3,#EAB308);"></div>
+    </div>
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Insight Pasar</p>
+      <span class="kicker mb-3 reveal">Insight Pasar</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">Apa Sebenarnya Dicari Gen Z dan Orang Tua?</h2>
-      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">Gen Z dan orang tua tidak lagi puas dengan brosur dan akreditasi; yang dicari adalah relevansi nyata dan kejelasan masa depan.</p>
-      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">Gen Z:</span> ingin skill yang cepat terpakai, pengalaman nyata, dan ruang berkarya lintas disiplin—bukan hanya nilai raport.</li>
-        <li><span class="font-semibold">Orang tua:</span> membutuhkan kepastian biaya yang rasional dan jalur karier yang jelas, bukan hanya janji umum di brosur.</li>
-        <li><span class="font-semibold">Kesimpulan:</span> kampus yang menang adalah kampus yang paling meyakinkan dalam menciptakan nilai nyata bagi masa depan anak dan ekonomi keluarga.</li>
-      </ul>
+      <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-6 reveal">Gen Z dan orang tua tidak lagi puas dengan brosur dan akreditasi; yang dicari adalah relevansi nyata dan kejelasan masa depan.</p>
+      <div class="grid md:grid-cols-2 gap-4 max-w-4xl">
+        <div class="glass-panel rounded-2xl p-5 reveal">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="icon-chip"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></span>
+            <h3 class="font-bold text-base">Gen Z</h3>
+          </div>
+          <p class="text-sm text-text-secondary leading-relaxed">Ingin skill yang cepat terpakai, pengalaman nyata, dan ruang berkarya lintas disiplin—bukan hanya nilai raport.</p>
+        </div>
+        <div class="glass-panel rounded-2xl p-5 reveal">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="icon-chip"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg></span>
+            <h3 class="font-bold text-base">Orang Tua</h3>
+          </div>
+          <p class="text-sm text-text-secondary leading-relaxed">Membutuhkan kepastian biaya yang rasional dan jalur karier yang jelas, bukan hanya janji umum di brosur.</p>
+        </div>
+      </div>
+      <div class="glass-panel rounded-2xl p-4 mt-4 border-l-4 border-accent-1 max-w-4xl reveal">
+        <p class="text-sm md:text-base text-text-secondary"><span class="font-bold text-accent-1-bright">Kesimpulan:</span> kampus yang menang adalah kampus yang paling meyakinkan dalam menciptakan nilai nyata bagi masa depan anak dan ekonomi keluarga.</p>
+      </div>
     </div>
   </div>
 
-  <div class="slide slide-4" data-slide="4">
+  <div class="slide slide-5" data-slide="5" data-ambient="green">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Visi Reposisi</p>
+      <span class="kicker kicker-accent mb-3 reveal">Visi Reposisi</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-4 reveal">Reposisi {{KAMPUS}}: Dari Tempat Kuliah ke Ekosistem Nilai</h2>
       <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-5 reveal">Strategi ini mendesain ulang hubungan kampus–mahasiswa–keluarga–industri, sehingga setiap pihak merasakan manfaat konkret sejak awal perjalanan perkuliahan.</p>
       <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">Early-engagement sejak SMA:</span> mengunci komitmen calon mahasiswa melalui sandbox inovasi dan program bridging yang kredibel secara RPL.</li>
-        <li><span class="font-semibold">Ekosistem inklusi finansial:</span> mengajarkan mahasiswa mengelola keuangan dan mengangkat ekonomi keluarga/UMKM sejak semester awal.</li>
-        <li><span class="font-semibold">Integrasi karier berjenjang:</span> menghubungkan perkuliahan dengan micro-agency kampus dan beasiswa ikatan dinas yang jelas jalurnya.</li>
+        <li class="flex gap-2.5"><span class="icon-chip w-8 h-8 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-funnel"/></svg></span><span class="pt-1"><span class="font-semibold">Early-engagement sejak SMA:</span> mengunci komitmen calon mahasiswa melalui sandbox inovasi dan program bridging yang kredibel secara RPL.</span></li>
+        <li class="flex gap-2.5"><span class="icon-chip w-8 h-8 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-heart"/></svg></span><span class="pt-1"><span class="font-semibold">Ekosistem inklusi finansial:</span> mengajarkan mahasiswa mengelola keuangan dan mengangkat ekonomi keluarga/UMKM sejak semester awal.</span></li>
+        <li class="flex gap-2.5"><span class="icon-chip w-8 h-8 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-career"/></svg></span><span class="pt-1"><span class="font-semibold">Integrasi karier berjenjang:</span> menghubungkan perkuliahan dengan micro-agency kampus dan beasiswa ikatan dinas yang jelas jalurnya.</span></li>
       </ul>
     </div>
   </div>
 
-  <div class="slide slide-5" data-slide="5">
+  <div class="slide slide-6" data-slide="6" data-ambient="green">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Gambaran Besar</p>
+      <span class="kicker kicker-accent mb-3 reveal">Gambaran Besar</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.7rem)] font-semibold mb-5 reveal">Mesin Peningkat Enrollment: Tiga Pilar Terintegrasi</h2>
       <div class="grid md:grid-cols-3 gap-5 mt-2">
         <div class="glass-panel rounded-2xl p-5 md:p-6 border border-accent-1/40 reveal">
+          <div class="flex items-center justify-between mb-4">
+            <span class="icon-chip"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-funnel"/></svg></span>
+            <span class="font-display text-5xl font-black text-accent-1/25">1</span>
+          </div>
           <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 1 – Early-Engagement Funnel</h3>
           <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Innovator Sandbox dan Bridging Program Kelas Akselerasi berbasis RPL untuk meng-upgrade PMB menjadi seleksi berbasis karya dan komitmen jangka panjang.</p>
         </div>
         <div class="glass-panel rounded-2xl p-5 md:p-6 border border-accent-1/40 reveal">
-          <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 2 – Inclusive & Ethical Value</h3>
-          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Women & Youth Financial Inclusivity Hub dan Invezthink Financial Literacy & Entrepreneur Track untuk membangun diferensiasi nilai kampus yang humanis dan solutif.</p>
+          <div class="flex items-center justify-between mb-4">
+            <span class="icon-chip"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-heart"/></svg></span>
+            <span class="font-display text-5xl font-black text-accent-1/25">2</span>
+          </div>
+          <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 2 – Inclusive &amp; Ethical Value</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Women &amp; Youth Financial Inclusivity Hub dan Invezthink Financial Literacy &amp; Entrepreneur Track untuk membangun diferensiasi nilai kampus yang humanis dan solutif.</p>
         </div>
         <div class="glass-panel rounded-2xl p-5 md:p-6 border border-accent-1/40 reveal">
+          <div class="flex items-center justify-between mb-4">
+            <span class="icon-chip"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-career"/></svg></span>
+            <span class="font-display text-5xl font-black text-accent-1/25">3</span>
+          </div>
           <h3 class="font-semibold text-sm md:text-base mb-2">Pilar 3 – Sustainable Career Integration</h3>
           <p class="text-xs md:text-sm text-text-secondary leading-relaxed">AI-Driven Campus Micro-Agency dan Corporate-Bonded Scholarship untuk mengamankan jalur karier nyata sejak hari pertama kuliah.</p>
         </div>
@@ -190,141 +399,227 @@
     </div>
   </div>
 
-  <div class="slide slide-6" data-slide="6">
+  <div class="slide slide-7" data-slide="7" data-ambient="green">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 1 – Early-Engagement Funnel</p>
+      <span class="kicker kicker-accent mb-3 reveal">Pilar 1 – Early-Engagement Funnel</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Mengunci Komitmen Sejak SMA dengan Seleksi Berbasis Karya</h2>
       <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">Innovator Sandbox:</span> seleksi calon mahasiswa berbasis portofolio karya (projek, video, prototype, bisnis kecil) yang difilter oleh AI Video Interview dan sesi <em>live defending</em> singkat.</li>
-        <li><span class="font-semibold">Bridging Program Kelas Akselerasi:</span> siswa kelas XII dapat mulai “menabung SKS” melalui modul terstruktur yang sah dalam kerangka Rekognisi Pembelajaran Lampau (RPL).</li>
-        <li><span class="font-semibold">Outcome:</span> calon mahasiswa sudah merasa menjadi bagian dari {{KAMPUS}} bahkan sebelum lulus SMA, sehingga lebih sulit berpindah ke kampus atau jalur lain.</li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cube"/></svg></span><span class="pt-1"><span class="font-semibold">Innovator Sandbox:</span> seleksi calon mahasiswa berbasis portofolio karya (projek, video, prototype, bisnis kecil) yang difilter oleh AI Video Interview dan sesi <em>live defending</em> singkat.</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-grad"/></svg></span><span class="pt-1"><span class="font-semibold">Bridging Program Kelas Akselerasi:</span> siswa kelas XII dapat mulai “menabung SKS” melalui modul terstruktur yang sah dalam kerangka Rekognisi Pembelajaran Lampau (RPL).</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span><span class="pt-1"><span class="font-semibold">Outcome:</span> calon mahasiswa sudah merasa menjadi bagian dari {{KAMPUS}} bahkan sebelum lulus SMA, sehingga lebih sulit berpindah ke kampus atau jalur lain.</span></li>
       </ul>
     </div>
   </div>
 
-  <div class="slide slide-7" data-slide="7">
+  <div class="slide slide-8" data-slide="8" data-ambient="cream">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 1 – Journey Siswa SMA</p>
+      <span class="kicker mb-3 reveal">Pilar 1 – Journey Siswa SMA</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Alur Praktis dari Perspektif Siswa SMA</h2>
-      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li>Daftar ke <span class="font-semibold">Innovator Sandbox {{KAMPUS}}</span> melalui kanal online yang mudah diakses guru BK dan siswa.</li>
-        <li>Mengirim <span class="font-semibold">portofolio karya</span> (video, projek, karya multimedia, bisnis keluarga, dsb.) and mengikuti AI Video Interview serta sesi singkat dengan dosen.</li>
-        <li>Mendapatkan <span class="font-semibold">sertifikat + kredit RPL / modul akselerasi</span> yang bisa dikonversi menjadi SKS ketika resmi mendaftar di {{KAMPUS}}.</li>
-        <li>Di akhir proses, siswa tidak hanya “diterima”, tetapi merasa sudah berinvestasi waktu dan karya di {{KAMPUS}}.</li>
-      </ul>
+      <div class="stepper max-w-3xl">
+        <div class="step">
+          <span class="step-num">1</span>
+          <p class="text-sm md:text-base text-text-secondary pt-1">Daftar ke <span class="font-semibold">Innovator Sandbox {{KAMPUS}}</span> melalui kanal online yang mudah diakses guru BK dan siswa.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <p class="text-sm md:text-base text-text-secondary pt-1">Mengirim <span class="font-semibold">portofolio karya</span> (video, projek, karya multimedia, bisnis keluarga, dsb.) dan mengikuti AI Video Interview serta sesi singkat dengan dosen.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <p class="text-sm md:text-base text-text-secondary pt-1">Mendapatkan <span class="font-semibold">sertifikat + kredit RPL / modul akselerasi</span> yang bisa dikonversi menjadi SKS ketika resmi mendaftar di {{KAMPUS}}.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <p class="text-sm md:text-base text-text-secondary pt-1">Di akhir proses, siswa tidak hanya “diterima”, tetapi merasa sudah berinvestasi waktu dan karya di {{KAMPUS}}.</p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="slide slide-8" data-slide="8">
+  <div class="slide slide-9" data-slide="9" data-ambient="green">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 2 – Inclusive & Ethical Value</p>
+      <span class="kicker kicker-accent mb-3 reveal">Pilar 2 – Inclusive &amp; Ethical Value</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Nilai Tambah Sejak Semester Satu: Inklusif dan Etis</h2>
       <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">Women & Youth Financial Inclusivity Hub:</span> ruang belajar dan pendampingan finansial bagi perempuan dan pemuda, lintas prodi, dengan pendekatan praktis dan sensitif konteks keluarga.</li>
-        <li><span class="font-semibold">Invezthink Financial Literacy & Entrepreneur Track:</span> kurikulum micro-modul yang mengajarkan pengelolaan uang, mitigasi risiko, dan perencanaan usaha menggunakan simulasi investasi yang aman dan patuh regulasi.</li>
-        <li><span class="font-semibold">Fokus etika:</span> instrumen spekulatif berisiko tinggi dibatasi; micro-grant diarahkan hanya ke bisnis riil dan aktivitas produktif.</li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-users"/></svg></span><span class="pt-1"><span class="font-semibold">Women &amp; Youth Financial Inclusivity Hub:</span> ruang belajar dan pendampingan finansial bagi perempuan dan pemuda, lintas prodi, dengan pendekatan praktis dan sensitif konteks keluarga.</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"/></svg></span><span class="pt-1"><span class="font-semibold">Invezthink Financial Literacy &amp; Entrepreneur Track:</span> kurikulum micro-modul yang mengajarkan pengelolaan uang, mitigasi risiko, dan perencanaan usaha menggunakan simulasi investasi yang aman dan patuh regulasi.</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"/></svg></span><span class="pt-1"><span class="font-semibold">Fokus etika:</span> instrumen spekulatif berisiko tinggi dibatasi; micro-grant diarahkan hanya ke bisnis riil dan aktivitas produktif.</span></li>
       </ul>
     </div>
   </div>
 
-  <div class="slide slide-9" data-slide="9">
+  <div class="slide slide-10" data-slide="10" data-ambient="cream">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 2 – Dampak</p>
+      <span class="kicker mb-3 reveal">Pilar 2 – Dampak</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Dari Kelas ke Meja Makan Keluarga</h2>
       <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li>Mahasiswa membantu orang tua menyusun ulang arus kas keluarga, mengurangi beban cicilan konsumtif, dan mulai menabung dengan pola yang sehat.</li>
-        <li>Mahasiswa mendampingi UMKM sekitar kampus/rumah dalam pencatatan sederhana, penentuan harga, dan perencanaan ekspansi kecil.</li>
-        <li>Kisah sukses mahasiswa dan keluarga ini dapat diangkat sebagai <span class="font-semibold">cerita kampanye {{KAMPUS}}</span> yang menyentuh emosi orang tua calon pendaftar.</li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg></span><span class="pt-1">Mahasiswa membantu orang tua menyusun ulang arus kas keluarga, mengurangi beban cicilan konsumtif, dan mulai menabung dengan pola yang sehat.</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-brief"/></svg></span><span class="pt-1">Mahasiswa mendampingi UMKM sekitar kampus/rumah dalam pencatatan sederhana, penentuan harga, dan perencanaan ekspansi kecil.</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-spark"/></svg></span><span class="pt-1">Kisah sukses mahasiswa dan keluarga ini dapat diangkat sebagai <span class="font-semibold">cerita kampanye {{KAMPUS}}</span> yang menyentuh emosi orang tua calon pendaftar.</span></li>
       </ul>
     </div>
   </div>
 
-  <div class="slide slide-10" data-slide="10">
+  <div class="slide slide-11" data-slide="11" data-ambient="green">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 3 – Sustainable Career Integration</p>
+      <span class="kicker kicker-accent mb-3 reveal">Pilar 3 – Sustainable Career Integration</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Karier yang Terdesain, Bukan Kebetulan</h2>
       <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">AI-Driven Campus Micro-Agency:</span> unit internal yang mengerjakan proyek digital (konten, analitik, otomasi sederhana, riset pasar) untuk UMKM dan partner industri, dikelola mahasiswa lintas prodi.</li>
-        <li><span class="font-semibold">Corporate-Bonded Scholarship:</span> skema beasiswa ikatan dinas dengan klausul yang jelas, termasuk mekanisme buy-out yang adil jika mahasiswa ingin beralih jalur.</li>
-        <li><span class="font-semibold">Hasilnya:</span> mahasiswa tidak lagi bertanya “lulus nanti kerja apa?”, karena dari awal sudah berjalan di jalur karier tertentu.</li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-brief"/></svg></span><span class="pt-1"><span class="font-semibold">AI-Driven Campus Micro-Agency:</span> unit internal yang mengerjakan proyek digital (konten, analitik, otomasi sederhana, riset pasar) untuk UMKM dan partner industri, dikelola mahasiswa lintas prodi.</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-award"/></svg></span><span class="pt-1"><span class="font-semibold">Corporate-Bonded Scholarship:</span> skema beasiswa ikatan dinas dengan klausul yang jelas, termasuk mekanisme buy-out yang adil jika mahasiswa ingin beralih jalur.</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span><span class="pt-1"><span class="font-semibold">Hasilnya:</span> mahasiswa tidak lagi bertanya “lulus nanti kerja apa?”, karena dari awal sudah berjalan di jalur karier tertentu.</span></li>
       </ul>
     </div>
   </div>
 
-  <div class="slide slide-11" data-slide="11">
+  <div class="slide slide-12" data-slide="12" data-ambient="green">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Pilar 3 – Jalur Karier</p>
+      <span class="kicker kicker-accent mb-3 reveal">Pilar 3 – Jalur Karier</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Visual Jalur Karier: Dari Semester Awal ke Dunia Kerja</h2>
-      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">Track Micro-Agency:</span> Semester 1–2: training & proyek kecil internal → Semester 3–5: menangani klien UMKM/mitra kampus → Semester 6 ke atas: portofolio kuat untuk kerja atau membangun usaha sendiri.</li>
-        <li><span class="font-semibold">Track Corporate-Bonded:</span> seleksi awal → beasiswa & mentoring dari perusahaan partner → jalur rekrutmen prioritas setelah lulus dengan opsi buy-out yang disepakati sejak awal.</li>
-        <li><span class="font-semibold">Hybrid:</span> mahasiswa dapat berpindah atau mengombinasikan keduanya sesuai performa dan minat.</li>
-      </ul>
+      <div class="grid md:grid-cols-2 gap-5 max-w-4xl">
+        <div class="glass-panel rounded-2xl p-5 reveal">
+          <div class="flex items-center gap-2.5 mb-4">
+            <span class="icon-chip"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-brief"/></svg></span>
+            <h3 class="font-bold text-sm">Track Micro-Agency</h3>
+          </div>
+          <div class="timeline">
+            <div class="tl-line"></div>
+            <div class="tl-item">
+              <span class="tl-node"></span>
+              <span class="block text-[10px] uppercase tracking-widest text-text-muted mb-1">Semester 1–2</span>
+              <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Training &amp; proyek kecil internal.</p>
+            </div>
+            <div class="tl-item">
+              <span class="tl-node"></span>
+              <span class="block text-[10px] uppercase tracking-widest text-text-muted mb-1">Semester 3–5</span>
+              <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Menangani klien UMKM/mitra kampus.</p>
+            </div>
+            <div class="tl-item">
+              <span class="tl-node"></span>
+              <span class="block text-[10px] uppercase tracking-widest text-text-muted mb-1">Semester 6+</span>
+              <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Portofolio kuat untuk kerja atau membangun usaha sendiri.</p>
+            </div>
+          </div>
+        </div>
+        <div class="glass-panel rounded-2xl p-5 reveal">
+          <div class="flex items-center gap-2.5 mb-4">
+            <span class="icon-chip"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-award"/></svg></span>
+            <h3 class="font-bold text-sm">Track Corporate-Bonded</h3>
+          </div>
+          <div class="timeline">
+            <div class="tl-line"></div>
+            <div class="tl-item">
+              <span class="tl-node"></span>
+              <span class="block text-[10px] uppercase tracking-widest text-text-muted mb-1">Awal</span>
+              <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Seleksi bersama perusahaan partner.</p>
+            </div>
+            <div class="tl-item">
+              <span class="tl-node"></span>
+              <span class="block text-[10px] uppercase tracking-widest text-text-muted mb-1">Selama studi</span>
+              <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Beasiswa &amp; mentoring dari partner.</p>
+            </div>
+            <div class="tl-item">
+              <span class="tl-node"></span>
+              <span class="block text-[10px] uppercase tracking-widest text-text-muted mb-1">Setelah lulus</span>
+              <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Rekrutmen prioritas, dengan opsi buy-out yang adil.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="text-sm text-text-secondary mt-5 max-w-3xl reveal"><span class="font-semibold text-accent-1-bright">Hybrid:</span> mahasiswa dapat berpindah atau mengombinasikan keduanya sesuai performa dan minat.</p>
     </div>
   </div>
 
-  <div class="slide slide-12" data-slide="12">
+  <div class="slide slide-13" data-slide="13" data-ambient="green">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Mengapa Sekarang?</p>
-      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Mengapa Program Ini Tepat untuk {{KAMPUS}}, dan Tepat Dilakukan Sekarang</h2>
-      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">Zero–Low Internal Budget:</span> pendanaan bertumpu pada Co-Branding CSR industri, monetisasi modul SMA, dan otomatisasi AI sehingga tidak menekan anggaran operasional kampus.</li>
-        <li><span class="font-semibold">Strict Regulatory & Governance Compliance:</span> desain mematuhi rambu Kemendikbudristek (RPL/PDDIKTI), OJK, dan prinsip perlindungan data: batas instrumen, NDA studi kasus, dan dokumentasi RPL yang jelas.</li>
-        <li><span class="font-semibold">High Emotional & Practical Impact:</span> menyentuh kekhawatiran orang tua, aspirasi Gen Z, dan kebutuhan ekonomi lokal secara bersamaan—bukan program gimmick yang mudah dilupakan.</li>
-      </ul>
+      <span class="kicker kicker-accent mb-3 reveal">Mengapa Sekarang?</span>
+      <h2 class="font-display text-[clamp(1.9rem,3.8vw,2.5rem)] font-semibold mb-5 reveal">Mengapa Program Ini Tepat untuk {{KAMPUS}}, dan Tepat Dilakukan Sekarang</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="glass-panel rounded-2xl p-5 reveal">
+          <span class="icon-chip mb-3"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></span>
+          <h3 class="font-bold text-sm mb-2">Zero–Low Internal Budget</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Pendanaan bertumpu pada Co-Branding CSR industri, monetisasi modul SMA, dan otomatisasi AI sehingga tidak menekan anggaran operasional kampus.</p>
+        </div>
+        <div class="glass-panel rounded-2xl p-5 reveal">
+          <span class="icon-chip mb-3"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"/></svg></span>
+          <h3 class="font-bold text-sm mb-2">Strict Regulatory &amp; Governance Compliance</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Desain mematuhi rambu Kemendikbudristek (RPL/PDDIKTI), OJK, dan prinsip perlindungan data: batas instrumen, NDA studi kasus, dan dokumentasi RPL yang jelas.</p>
+        </div>
+        <div class="glass-panel rounded-2xl p-5 reveal">
+          <span class="icon-chip mb-3"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-heart"/></svg></span>
+          <h3 class="font-bold text-sm mb-2">High Emotional &amp; Practical Impact</h3>
+          <p class="text-xs md:text-sm text-text-secondary leading-relaxed">Menyentuh kekhawatiran orang tua, aspirasi Gen Z, dan kebutuhan ekonomi lokal secara bersamaan—bukan program gimmick yang mudah dilupakan.</p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="slide slide-13" data-slide="13">
+  <div class="slide slide-14" data-slide="14" data-ambient="cream">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Roadmap Implementasi</p>
-      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Roadmap 2 Siklus PMB: Mulai Kecil, Dampak Terukur</h2>
-      <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">Tahun 1 (Pilot):</span> implementasi sandbox + bridging di beberapa sekolah mitra; pilot Women & Youth Financial Inclusivity Hub dan track Invezthink di 1–2 prodi; peluncuran awal micro-agency dengan beberapa UMKM Surabaya.</li>
-        <li><span class="font-semibold">Tahun 2 (Scale-Up):</span> perluasan ke lebih banyak sekolah mitra dan prodi lintas fakultas; batch pertama Corporate-Bonded Scholarship dengan mitra industri; penyesuaian kurikulum dan SOP berdasarkan data evaluasi tahun pertama.</li>
-        <li><span class="font-semibold">Prinsip desain:</span> iteratif, bisa disesuaikan sambil berjalan—bukan pendekatan “big bang” yang berisiko tinggi.</li>
-      </ul>
+      <span class="kicker mb-3 reveal">Roadmap Implementasi</span>
+      <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-5 reveal">Roadmap 2 Siklus PMB: Mulai Kecil, Dampak Terukur</h2>
+      <div class="timeline max-w-3xl reveal">
+        <div class="tl-line"></div>
+        <div class="tl-item">
+          <span class="tl-node"></span>
+          <span class="badge-pill text-[10px] uppercase tracking-widest text-accent-1 mb-1 inline-block">Tahun 1 — Pilot</span>
+          <p class="text-sm md:text-base text-text-secondary leading-relaxed">Implementasi sandbox + bridging di beberapa sekolah mitra; pilot Women &amp; Youth Financial Inclusivity Hub dan track Invezthink di 1–2 prodi; peluncuran awal micro-agency dengan beberapa UMKM Surabaya.</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-node"></span>
+          <span class="badge-pill text-[10px] uppercase tracking-widest text-accent-1 mb-1 inline-block">Tahun 2 — Scale-Up</span>
+          <p class="text-sm md:text-base text-text-secondary leading-relaxed">Perluasan ke lebih banyak sekolah mitra dan prodi lintas fakultas; batch pertama Corporate-Bonded Scholarship dengan mitra industri; penyesuaian kurikulum dan SOP berdasarkan data evaluasi tahun pertama.</p>
+        </div>
+      </div>
+      <div class="glass-panel rounded-2xl p-4 mt-5 max-w-3xl border-l-4 border-accent-1 reveal">
+        <p class="text-sm md:text-base text-text-secondary"><span class="font-bold text-accent-1-bright">Prinsip desain:</span> iteratif, bisa disesuaikan sambil berjalan—bukan pendekatan “big bang” yang berisiko tinggi.</p>
+      </div>
     </div>
   </div>
 
-  <div class="slide slide-14" data-slide="14">
+  <div class="slide slide-15" data-slide="15" data-ambient="green">
     <div class="content">
-      <p class="text-xs md:text-sm tracking-[0.22em] uppercase text-text-muted mb-3 reveal">Mandat yang Diperlukan</p>
+      <span class="kicker kicker-accent mb-3 reveal">Mandat yang Diperlukan</span>
       <h2 class="font-display text-[clamp(2rem,4vw,2.6rem)] font-semibold mb-4 reveal">Apa yang Kami Minta dari Pimpinan {{KAMPUS}}</h2>
       <ul class="space-y-3 text-sm md:text-base text-text-secondary reveal">
-        <li><span class="font-semibold">Mandat lintas unit:</span> dukungan formal untuk menyatukan akademik, PMB, kemahasiswaan, dan kemitraan industri di bawah satu payung program ini.</li>
-        <li><span class="font-semibold">Komitmen eksekusi minimal dua siklus PMB:</span> agar desain sistem ini punya waktu cukup untuk menunjukkan dampak nyata terhadap angka pendaftar dan kualitas mahasiswa.</li>
-        <li><span class="font-semibold">Kolaborasi desain & eksekusi:</span> sisi teknologi, operasional, dan model bisnis siap kami bangun dan iterasikan bersama—dengan {{KAMPUS}} sebagai rumah akademiknya.</li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-building"/></svg></span><span class="pt-1"><span class="font-semibold">Mandat lintas unit:</span> dukungan formal untuk menyatukan akademik, PMB, kemahasiswaan, dan kemitraan industri di bawah satu payung program ini.</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-target"/></svg></span><span class="pt-1"><span class="font-semibold">Komitmen eksekusi minimal dua siklus PMB:</span> agar desain sistem ini punya waktu cukup untuk menunjukkan dampak nyata terhadap angka pendaftar dan kualitas mahasiswa.</span></li>
+        <li class="flex gap-3"><span class="icon-chip w-9 h-9 rounded-full!"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-spark"/></svg></span><span class="pt-1"><span class="font-semibold">Kolaborasi desain &amp; eksekusi:</span> sisi teknologi, operasional, dan model bisnis siap kami bangun dan iterasikan bersama—dengan {{KAMPUS}} sebagai rumah akademiknya.</span></li>
       </ul>
     </div>
   </div>
 
 
   <!-- =======================================================
-       SLIDE 15: PORTAL DASHBOARD UTAMA (SLIDE PENUTUP MAKSIMAL)
+       SLIDE 16: PORTAL 8 PROGRAM (DEEP-DIVE)
        ======================================================= -->
-  <div class="slide slide-15" data-slide="15">
-    <div class="gradient-mesh">
-      <div class="blob" style="width:450px;height:450px;top:-100px;right:-100px;background:radial-gradient(circle,#8BC34A,transparent 65%);"></div>
+  <div class="slide slide-16" data-slide="16" data-ambient="green">
+    <div class="gradient-mesh" data-speed="slow">
+      <div class="blob" style="width:450px;height:450px;top:-100px;right:-100px;background:radial-gradient(circle,#4ADE80,transparent 65%);"></div>
     </div>
     <div class="content">
-      <div class="inline-flex items-center gap-2 badge-pill text-xs tracking-[0.22em] uppercase text-accent-1 mb-3 reveal">
-        <span>Strategic Proposal Appendix Portal</span>
-      </div>
+      <span class="kicker kicker-accent mb-3 reveal">Strategic Proposal Appendix Portal</span>
       <h2 class="font-display text-[clamp(2.2rem,4.5vw,3.2rem)] font-bold mb-2 reveal">Lampiran Dokumen Teknis Rencana Program</h2>
-      <p class="text-xs md:text-sm text-text-muted mb-6 max-w-2xl reveal">Klik kartu di bawah untuk membuka *Deep-Dive Portal* terpisah. Menampilkan blueprint utuh, kurikulum, standarisasi etika, dan kepatuhan hukum dari 8 usulan program.</p>
+      <p class="text-xs md:text-sm text-text-muted mb-6 max-w-2xl reveal">Klik kartu di bawah untuk membuka <em>Deep-Dive Portal</em> terpisah. Menampilkan blueprint utuh, kurikulum, standarisasi etika, dan kepatuhan hukum dari 8 usulan program.</p>
       
-      <!-- Grid Menu Cantik Terpisah -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 reveal">
         <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-sandbox')">
           <div>
+            <div class="flex items-start justify-between mb-2">
+              <span class="icon-chip w-8 h-8"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cube"/></svg></span>
+              <span class="badge-pill text-[9px] text-text-muted">Rekrutmen</span>
+            </div>
             <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 01</div>
-            <h3 class="text-xs font-bold text-text leading-tight">Innovator Sandbox & PoW</h3>
+            <h3 class="text-xs font-bold text-text leading-tight">Innovator Sandbox &amp; PoW</h3>
           </div>
           <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
         </div>
         <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-nanodegree')">
           <div>
+            <div class="flex items-start justify-between mb-2">
+              <span class="icon-chip w-8 h-8"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-grad"/></svg></span>
+              <span class="badge-pill text-[9px] text-text-muted">Rekrutmen</span>
+            </div>
             <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 02</div>
             <h3 class="text-xs font-bold text-text leading-tight">Hybrid Nano-Degree SMA</h3>
           </div>
@@ -332,6 +627,10 @@
         </div>
         <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-financial')">
           <div>
+            <div class="flex items-start justify-between mb-2">
+              <span class="icon-chip w-8 h-8"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"/></svg></span>
+              <span class="badge-pill text-[9px] text-text-muted">Literasi</span>
+            </div>
             <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 03</div>
             <h3 class="text-xs font-bold text-text leading-tight">Invezthink FinLit Track</h3>
           </div>
@@ -339,6 +638,10 @@
         </div>
         <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-agency')">
           <div>
+            <div class="flex items-start justify-between mb-2">
+              <span class="icon-chip w-8 h-8"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-brief"/></svg></span>
+              <span class="badge-pill text-[9px] text-text-muted">Karier</span>
+            </div>
             <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 04</div>
             <h3 class="text-xs font-bold text-text leading-tight">Campus Micro-Agency</h3>
           </div>
@@ -346,6 +649,10 @@
         </div>
         <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-bonded')">
           <div>
+            <div class="flex items-start justify-between mb-2">
+              <span class="icon-chip w-8 h-8"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-award"/></svg></span>
+              <span class="badge-pill text-[9px] text-text-muted">Karier</span>
+            </div>
             <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 05</div>
             <h3 class="text-xs font-bold text-text leading-tight">Corporate-Bonded Track</h3>
           </div>
@@ -353,13 +660,21 @@
         </div>
         <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-womenhub')">
           <div>
+            <div class="flex items-start justify-between mb-2">
+              <span class="icon-chip w-8 h-8"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-users"/></svg></span>
+              <span class="badge-pill text-[9px] text-text-muted">Inklusi</span>
+            </div>
             <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 06</div>
-            <h3 class="text-xs font-bold text-text leading-tight">Women & Youth Hub</h3>
+            <h3 class="text-xs font-bold text-text leading-tight">Women &amp; Youth Hub</h3>
           </div>
           <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
         </div>
         <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-ambassador')">
           <div>
+            <div class="flex items-start justify-between mb-2">
+              <span class="icon-chip w-8 h-8"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-mega"/></svg></span>
+              <span class="badge-pill text-[9px] text-text-muted">Komunitas</span>
+            </div>
             <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 07</div>
             <h3 class="text-xs font-bold text-text leading-tight">Student Ambassador</h3>
           </div>
@@ -367,12 +682,32 @@
         </div>
         <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-greenledger')">
           <div>
+            <div class="flex items-start justify-between mb-2">
+              <span class="icon-chip w-8 h-8"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-leaf"/></svg></span>
+              <span class="badge-pill text-[9px] text-text-muted">Keberlanjutan</span>
+            </div>
             <div class="text-accent-1 text-[10px] font-bold uppercase mb-1">Program 08</div>
             <h3 class="text-xs font-bold text-text leading-tight">Green Ledger Campus</h3>
           </div>
           <span class="text-[10px] text-accent-1 font-medium mt-3 block">Eksplorasi Konsep →</span>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: PENUTUP CTA -->
+  <div class="slide slide-17" data-slide="17" data-ambient="green">
+    <div class="photo-bg" data-speed="slow" style="background-image:url('https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1800&q=60')"></div>
+    <div class="photo-overlay tint"></div>
+    <div class="content flex flex-col items-center text-center">
+      <span class="badge-pill text-xs tracking-[0.22em] uppercase text-accent-1 mb-4 reveal">Langkah Berikutnya</span>
+      <h2 class="font-display text-[clamp(2rem,4.2vw,3.2rem)] font-bold mb-4 reveal">Siap Membangun Ekosistem Masa Depan {{KAMPUS}}?</h2>
+      <p class="max-w-2xl text-sm md:text-base text-text-secondary leading-relaxed text-balance mb-7 reveal">Kami siap mendampingi {{KAMPUS}} dari desain hingga eksekusi—teknologi, operasional, dan model bisnisnya—untuk menciptakan nilai nyata bagi mahasiswa, keluarga, dan ekonomi sekitar.</p>
+      <div class="flex flex-wrap items-center justify-center gap-3 reveal">
+        <button class="btn-primary" onclick="openModal('modal-sandbox')"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-globe"/></svg>Eksplorasi Portal Program</button>
+        <button class="btn-ghost" onclick="openSettings()"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg>Sesuaikan untuk Kampus Anda</button>
+      </div>
+      <p class="text-xs text-text-muted mt-8 reveal">Strategi Percepatan Enrollment — {{KAMPUS}} · 2026</p>
     </div>
   </div>
 
@@ -759,7 +1094,7 @@
   <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
   <div class="slide-dots" id="dots"></div>
   <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
-  <span class="slide-counter" id="counter">1 / 15</span>
+  <span class="slide-counter" id="counter">1 / 17</span>
   <button class="nav-btn settings-btn" onclick="openSettings()" title="Ubah nama kampus & angka untuk prospek">⚙</button>
 </div>
 
@@ -882,6 +1217,7 @@
     BRAND.pendaftarSebelum = document.getElementById('f-pendaftarSebelum').value.trim() || BRAND_DEFAULT.pendaftarSebelum;
     BRAND.pendaftarTerakhir = document.getElementById('f-pendaftarTerakhir').value.trim() || BRAND_DEFAULT.pendaftarTerakhir;
     applyBranding();
+    runDataViz(document.querySelector('.slide.active'));
     try { localStorage.setItem('neocampus_brand', JSON.stringify(BRAND)); } catch (e) {}
     document.getElementById('modal-settings').classList.remove('open');
   }
@@ -889,6 +1225,7 @@
   function resetBrand() {
     Object.assign(BRAND, BRAND_DEFAULT);
     applyBranding();
+    runDataViz(document.querySelector('.slide.active'));
     try { localStorage.removeItem('neocampus_brand'); } catch (e) {}
     document.getElementById('modal-settings').classList.remove('open');
   }
@@ -910,6 +1247,7 @@
   applyBranding();
 
   let current = 1;
+  let jumpNav = false;
   const total = document.querySelectorAll('.slide').length; 
   const dotsContainer = document.getElementById('dots');
   const counter = document.getElementById('counter');
@@ -917,8 +1255,21 @@
   for (let i = 1; i <= total; i++) {
     const dot = document.createElement('div');
     dot.className = 'dot' + (i === 1 ? ' active' : '');
-    dot.onclick = () => goToSlide(i);
+    dot.onclick = () => { jumpNav = true; goToSlide(i); };
     dotsContainer.appendChild(dot);
+  }
+
+  // Lapisan parallax: elemen [data-speed] bergerak beda kecepatan saat transisi
+  function parallaxLayer(slide, dir, applyOffset) {
+    if (!slide) return;
+    const dirSign = dir === 'left' ? 1 : (dir === 'right' ? -1 : 0);
+    slide.querySelectorAll('[data-speed]').forEach((el) => {
+      const speed = parseFloat(el.dataset.speed) || 0;
+      const dx = dirSign * (26 + speed * 130);
+      const dy = dir === 'jump' ? (12 + speed * 34) : 0;
+      el.style.transition = applyOffset ? 'none' : 'transform .75s cubic-bezier(.22,1,.36,1)';
+      el.style.transform = applyOffset ? `translate3d(${dx}px, ${dy}px, 0)` : 'translate3d(0,0,0)';
+    });
   }
 
   function goToSlide(n) {
@@ -926,12 +1277,22 @@
 
     const prev = document.querySelector('.slide.active');
     const next = document.querySelector(`.slide[data-slide="${n}"]`);
+    const dir = jumpNav ? 'jump' : (n > current ? 'right' : n < current ? 'left' : 'jump');
+    jumpNav = false;
     if (prev) prev.classList.remove('active');
     if (next) { 
+      next.classList.remove('from-right','from-left','from-jump');
+      parallaxLayer(next, dir, true);
+      next.classList.add(dir === 'right' ? 'from-right' : dir === 'left' ? 'from-left' : 'from-jump');
+      next.offsetHeight;
       next.classList.add('active'); 
+      parallaxLayer(next, dir, false);
       animateSlide(next); 
+      runDataViz(next);
+      updateAmbient(next);
       const contentEl = next.querySelector('.content');
       if (contentEl) contentEl.scrollTop = 0;
+      setTimeout(() => next.classList.remove('from-right','from-left','from-jump'), 780);
     }
     current = n; 
     updateNav();
@@ -986,25 +1347,128 @@
   });
 
   function animateSlide(slide) {
+    if (!slide) return;
     slide.querySelectorAll('.reveal').forEach((el, i) => {
       el.style.transition = 'none';
       el.style.opacity = '0';
       el.style.transform = 'translateY(18px)';
+      el.style.filter = 'blur(6px)';
       el.offsetHeight; 
       const delay = i * 0.08;
-      el.style.transition = `opacity 0.4s ease ${delay}s, transform 0.4s ease ${delay}s`;
+      el.style.transition = `opacity .55s ease ${delay}s, transform .55s cubic-bezier(.22,1,.36,1) ${delay}s, filter .55s ease ${delay}s`;
       el.style.opacity = '1';
       el.style.transform = 'translateY(0)';
+      el.style.filter = 'blur(0)';
     });
   }
 
+  // ---- Data-viz: count-up, donut ring, timeline, stepper ----
+  function parseNumber(el) {
+    const txt = (el.dataset.count || el.textContent || '').replace(/[^\d.,%]/g, '');
+    const m = txt.match(/([\d.,]+)(%?)/);
+    if (!m) return { value: 0, suffix: '' };
+    const raw = m[1].replace(/\./g, '').replace(',', '.');
+    return { value: parseFloat(raw) || 0, suffix: m[2] || '' };
+  }
+  function fmtID(v) {
+    return v.toLocaleString('id-ID');
+  }
+  function runCountUp(el) {
+    const { value, suffix } = parseNumber(el);
+    if (REDUCED_MOTION) { el.textContent = fmtID(value) + suffix; return; }
+    const dur = 1500;
+    const start = performance.now();
+    function frame(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 4);
+      el.textContent = fmtID(Math.round(value * eased)) + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  function runDonut(slide) {
+    slide.querySelectorAll('.donut-bar').forEach((bar) => {
+      const wrap = bar.closest('.donut-wrap');
+      const center = wrap && wrap.querySelector('.donut-value');
+      const { value } = center ? parseNumber(center) : { value: 0 };
+      const pct = Math.min(Math.max(value, 0), 100);
+      bar.style.strokeDashoffset = String(100 - pct);
+      if (center) runCountUp(center);
+    });
+  }
+  function runDataViz(slide) {
+    if (!slide) return;
+    slide.querySelectorAll('.count-up').forEach((el) => runCountUp(el));
+    runDonut(slide);
+    slide.querySelectorAll('.timeline').forEach((tl) => { tl.classList.remove('run'); void tl.offsetHeight; tl.classList.add('run'); });
+    slide.querySelectorAll('.stepper').forEach((st) => { st.classList.remove('run'); void st.offsetHeight; st.classList.add('run'); });
+  }
+
+  // ---- Partikel cahaya ambient (warna mengikuti data-ambient slide aktif) ----
+  const pCanvas = document.getElementById('particles');
+  const pCtx = pCanvas ? pCanvas.getContext('2d') : null;
+  const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const AMBIENT_COLORS = {
+    green:  ['74,222,128', '134,239,172'],
+    cream:  ['253,246,227', '234,179,8'],
+    gold:   ['234,179,8', '253,246,227'],
+  };
+  let particles = [];
+  function sizeParticles() {
+    if (!pCanvas) return;
+    pCanvas.width = window.innerWidth;
+    pCanvas.height = window.innerHeight;
+  }
+  function ambientOf(slide) {
+    const key = (slide && slide.dataset && slide.dataset.ambient) || 'green';
+    return AMBIENT_COLORS[key] || AMBIENT_COLORS.green;
+  }
+  function spawnParticles(slide) {
+    if (!pCanvas || pCanvas.width === 0) return;
+    const cols = ambientOf(slide);
+    particles = Array.from({ length: 26 }, () => ({
+      x: Math.random() * pCanvas.width,
+      y: Math.random() * pCanvas.height,
+      r: 0.8 + Math.random() * 2.2,
+      vy: -(0.12 + Math.random() * 0.35),
+      sway: 0.15 + Math.random() * 0.45,
+      phase: Math.random() * Math.PI * 2,
+      c: cols[Math.floor(Math.random() * cols.length)],
+      o: 0.2 + Math.random() * 0.5,
+    }));
+  }
+  function tickParticles(t) {
+    if (!pCtx || REDUCED_MOTION) return;
+    pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+    for (const p of particles) {
+      p.y += p.vy;
+      p.x += Math.sin(t * 0.0006 + p.phase) * p.sway;
+      if (p.y < -8) { p.y = pCanvas.height + 8; p.x = Math.random() * pCanvas.width; }
+      pCtx.beginPath();
+      pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      pCtx.fillStyle = `rgba(${p.c},${p.o})`;
+      pCtx.fill();
+    }
+    requestAnimationFrame(tickParticles);
+  }
+  function updateAmbient(slide) {
+    const cols = ambientOf(slide);
+    document.documentElement.style.setProperty('--glow-color-rgb', cols[0]);
+    particles.forEach((p) => { p.c = cols[Math.floor(Math.random() * cols.length)]; });
+  }
+  sizeParticles();
+  window.addEventListener('resize', sizeParticles);
+  spawnParticles(document.querySelector('.slide.active'));
+  if (!REDUCED_MOTION) requestAnimationFrame(tickParticles);
+
   const spotlight = document.querySelector('.mouse-spotlight');
   document.addEventListener('mousemove', (e) => {
-    const rgb = getComputedStyle(document.documentElement).getPropertyValue('--glow-color-rgb').trim() || '139,195,74';
+    const rgb = getComputedStyle(document.documentElement).getPropertyValue('--glow-color-rgb').trim() || '74,222,128';
     spotlight.style.background = `radial-gradient(420px circle at ${e.clientX}px ${e.clientY}px, rgba(${rgb},0.16), transparent 60%)`;
   });
 
   animateSlide(document.querySelector('.slide.active'));
+  runDataViz(document.querySelector('.slide.active'));
 </script>
 </body>
 </html>

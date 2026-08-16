@@ -27,7 +27,7 @@ https://solusi-ai.github.io/NeoCampus/
 
 ## Fitur
 
-- **15 slide interaktif** — navigasi tombol, keyboard (←/→/spasi), swipe, dan dot
+- **17 slide interaktif** — navigasi tombol, keyboard (←/→/spasi), swipe, dan dot, plus slide Agenda & Penutup CTA
 - **8 program lengkap** dengan modal *deep-dive* per program
 - **Menu ⚙ “Pengaturan Kampus”** — isi nama kampus & angka kunci, tersimpan di
   browser, plus **Salin Link Kustom** siap kirim ke prospek
