@@ -157,6 +157,46 @@
       transform: scale(1);
     }
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.2s!important;}}
+    /* ===== Responsive HP portrait: konten muat tanpa scroll ===== */
+    .deck{height:100dvh;}
+    body{height:100dvh;}
+    .slide>.content{max-height:85dvh;}
+    @media (max-width: 640px){
+      .slide>.content{max-height:90dvh;padding:1.1rem 1.25rem 4.4rem;}
+      .slide>.content h1{font-size:clamp(1.4rem,6vw,2.1rem);line-height:1.14;}
+      .slide>.content h2{font-size:clamp(1.3rem,5.8vw,1.78rem);line-height:1.12;margin-bottom:.6rem;}
+      .slide>.content h3{line-height:1.25;}
+      .slide>.content>p{font-size:.75rem;}
+      .slide>.content ul{font-size:.78rem;}
+      .slide>.content ul>li+li{margin-top:.4rem;}
+      .slide>.content>*{margin-bottom:.75rem;}
+      .slide>.content>*:last-child{margin-bottom:0;}
+      .slide>.content .grid{gap:.5rem;}
+      .slide>.content .kicker{font-size:.62rem;letter-spacing:.15em;}
+      .slide>.content .glass-panel{padding:.6rem;}
+      .slide>.content .glass-panel p{font-size:.72rem;line-height:1.45;}
+      .slide>.content .glass-panel h3{font-size:.8rem;}
+      .slide>.content .grid-menu-card h3{font-size:.68rem;}
+      .slide>.content .grid-menu-card>span{display:none;}
+      .slide>.content .glass-panel .mb-1{margin-bottom:.3rem;}
+      .slide>.content .glass-panel .mb-2{margin-bottom:.35rem;}
+      .slide>.content .glass-panel .mb-3{margin-bottom:.4rem;}
+      .slide>.content .glass-panel .mb-4{margin-bottom:.5rem;}
+      .slide>.content .mt-5{margin-top:.85rem;}
+      .slide>.content .mt-8{margin-top:1.25rem;}
+      .slide>.content .stat-tile{padding:.65rem .7rem;}
+      .slide>.content .stat-value{font-size:1.35rem;}
+      .slide>.content .stat-label{font-size:.58rem;}
+      .slide>.content .donut-wrap{width:7.25rem;height:7.25rem;}
+      .slide>.content .donut-value{font-size:1.45rem;}
+      .slide>.content .timeline .block{font-size:.58rem;}
+      .slide>.content .tl-item{padding-bottom:.35rem;padding-left:2.2rem;}
+      .slide>.content .step{padding:.3rem 0;gap:.8rem;}
+      .slide>.content .step-num{width:1.8rem;height:1.8rem;font-size:.72rem;}
+      .slide>.content .icon-chip{width:1.6rem;height:1.6rem;}
+      .slide>.content .text-3xl{font-size:1.4rem;}
+      .slide>.content .text-5xl{font-size:1.8rem;}
+    }
   </style>
 </head>
 <body>
@@ -294,7 +334,7 @@
       <span class="kicker kicker-accent mb-3 reveal">Konteks &amp; Masalah</span>
       <h2 class="font-display text-[clamp(1.9rem,3.8vw,2.6rem)] font-semibold mb-3 reveal">Kenapa Enrollment Turun? Masalahnya Bukan Sekadar Promosi</h2>
       <p class="text-sm md:text-base text-text-secondary max-w-3xl leading-relaxed mb-6 reveal">{{KAMPUS}} mengalami penurunan pendaftar sekitar {{PENURUNAN}} dalam dua tahun terakhir—sejalan dengan tekanan yang juga dialami banyak perguruan tinggi swasta.</p>
-      <div class="grid md:grid-cols-[auto_1fr] gap-7 md:gap-12 items-center mb-6">
+      <div class="grid grid-cols-[7.25rem_1fr] md:grid-cols-[auto_1fr] gap-3.5 md:gap-12 items-center mb-6">
         <div class="donut-wrap reveal">
           <svg viewBox="0 0 120 120">
             <circle class="donut-track" cx="60" cy="60" r="48" pathLength="100"/>
@@ -305,7 +345,7 @@
             <span class="donut-label">Penurunan pendaftar</span>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-3 sm:gap-4">
           <div class="stat-tile reveal">
             <span class="stat-value count-up">{{PENDAFTAR_SEBELUM}}</span>
             <span class="stat-label">Pendaftar/th — sebelumnya</span>
@@ -603,7 +643,7 @@
       <h2 class="font-display text-[clamp(2.2rem,4.5vw,3.2rem)] font-bold mb-2 reveal">Lampiran Dokumen Teknis Rencana Program</h2>
       <p class="text-xs md:text-sm text-text-muted mb-6 max-w-2xl reveal">Klik kartu di bawah untuk membuka <em>Deep-Dive Portal</em> terpisah. Menampilkan blueprint utuh, kurikulum, standarisasi etika, dan kepatuhan hukum dari 8 usulan program.</p>
       
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 reveal">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 reveal">
         <div class="glass-panel p-4 rounded-xl grid-menu-card cursor-pointer flex flex-col justify-between" onclick="openModal('modal-sandbox')">
           <div>
             <div class="flex items-start justify-between mb-2">
